@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#\n# This is the user-interface definition of a Shiny web application. You can\n# run the application by clicking 'Run App' above.\n#\n# Find out more about building applications with Shiny here:\n# \n#    http://shiny.rstudio.com/\n# \n\nlibrary(shiny)\nrequire(\"Rfacebook\")\nlibrary(shinyjs)\n\n\n# Define UI for application that draws a histogram\nshinyUI(fluidPage(theme = \"bootstrap.css\",\n  tags$head(tags$script(src = \"message-handler.js\")),\n\n  # Application title\n  titlePanel(title=div(img(src=\"E.png\", width = \"5%\", height = \"5%\"), \"moTector\")),\n  #tags$img(src = \"line.png\", width = \"100%\", height = \"10px\"),\n  tags$hr(),\n \n    sidebarLayout(\n      sidebarPanel(\n        p(\"Click generate to fetch Facebook status.\"),\n        img(src=\"facebook.png\", height = 50, width = 50),\n        textInput(\"n\", \"Input Facebook Page:\"),\n        br(),\n        actionButton(\"generate\", \"Generate\"),\n        actionButton(\"reset\", \"Clear\"),\n        br(), br(),\n        fileInput('file1', 'Choose CSV File',\n                  accept=c('text/csv', \n                           'text/comma-separated-values,text/plain', \n                           '.csv')),\n        tags$hr(),\n        checkboxInput('header', 'Header', TRUE),\n        radioButtons('sep', 'Separator',\n                     c(Comma=',',\n                       Semicolon=';',\n                       Tab='\\t'),\n                     ','),\n        radioButtons('quote', 'Quote',\n                     c(None='',\n                       'Double Quote'='\"',\n                       'Single Quote'=\"'\"),\n                     '\"')\n      ),\n      mainPanel(\n        tableOutput('contents'),\n        p(\"Searched Word: \"),\n        verbatimTextOutput(\"facebookPage\")\n      )\n    )\n    \n    \n\n    \n    \n    \n    \n    \n\n\n))\n",
+    "created" : 1479956265665.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2393112629",
+    "id" : "D180E61A",
+    "lastKnownWriteTime" : 1482982755,
+    "last_content_update" : 1482982755945,
+    "path" : "~/MSTR/EmoTector/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
