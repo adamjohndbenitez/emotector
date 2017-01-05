@@ -1,0 +1,21 @@
+Package: EmoTector
+Title: Emotional Detector
+Version: 0.1.0
+Authors@R: person("Leah", "Maranan", email = "litlitmaranan91490@gmail.com",
+  role = c("aut", "cre"))
+Maintainer: Who to complain to <yourfault@somewhere.net>
+Description: A Web Application for Analyzing Emotions using Fuzzy Logic in R.
+Depends:
+    R (>= 3.2.5)
+License: MIT
+LazyData: true
+Suggests:
+    testthat,
+    knitr,
+    rmarkdown
+RoxygenNote: 5.0.1
+VignetteBuilder: knitr
+Imports:
+    shiny,
+    shinydashboard,
+    Rfacebook
