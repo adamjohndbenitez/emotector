@@ -10,6 +10,7 @@ shinydashboard::dashboardPage(skin = "blue",
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     )
+    shiny::h1("this is from shiny header")
   )
 )
 
