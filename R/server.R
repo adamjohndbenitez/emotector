@@ -1,15 +1,17 @@
-shiny::shinyServer(function(input, output) {
-  
+shiny::shinyServer(function(input, output, session) {
   base::load(file = "fb_oauth")
   
-  ntext <- shiny::eventReactive(input$searchButton, {
-    fb_page <- Rfacebook::getPage(page = input$searchText, token = fb_oauth)
-    post <- Rfacebook::getPost(post=fb_page$id[1], n=2000, token=fb_oauth)
-    print(fb_page$message[10])
-  })
+  shiny::updateDateRangeInput(session = session, inputId = "dateRangeId", start = Sys.Date() - 10, end = Sys.Date() + 10)
   
-  output$nText <- shiny::renderPrint({
-    ntext()
+  shiny::observeEvent(input$searchButton, {
+    listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], verbose = FALSE)
+
+    shiny::observe({
+      shiny::updateSelectInput(session = session, inputId = "postListId", choices = 1:length(listOfPosts$message))
+    })
+
+    output$viewPostId <- shiny::renderText({
+      listOfPosts$message[as.numeric(input$postListId)]
+    })
   })
-  
 })
