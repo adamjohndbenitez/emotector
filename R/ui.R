@@ -28,7 +28,18 @@ shinydashboard::dashboardPage(skin = "blue",
     )
   ),
   shinydashboard::dashboardBody(
-    shiny::uiOutput(outputId = "viewPostUIId"),
+    shiny::fluidRow(
+      shiny::uiOutput(outputId = "viewPostUIId")
+    ),
+    shiny::fluidRow(
+      shinydashboard::valueBoxOutput(outputId = "joyBox", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "JoyLowestBox", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "JoyLowBox", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "JoyNeutralBox", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "JoyHighBox", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "JoyHigherBox", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "JoyHighestBox", width = 3)
+    ),
     shiny::tags$head(
       shiny::tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     )

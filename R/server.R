@@ -15,7 +15,7 @@ shiny::shinyServer(function(input, output, session) {
         listOfPosts$message[as.numeric(input$postListId)]
       })
       
-      shiny::showNotification(ui = "We're good to go...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
+      shiny::showNotification(ui = "We're good...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
     }, error = function(e) {
       shiny::showNotification(ui = "The Facebook page or group ID you’re using is not correct or invalid. Click link below", action = 
         shiny::tags$a(href = "https://smashballoon.com/custom-facebook-feed/id/", "Ensure valid facebook page ID."), duration = NULL, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
@@ -41,5 +41,100 @@ shiny::shinyServer(function(input, output, session) {
     output$viewPostId <- shiny::renderText({
       input$manualPostTextAreaId
     })
+
+    tokenize <- tokenizers::tokenize_words(x = input$manualPostTextAreaId, lowercase = TRUE, stopwords = NULL, simplify = FALSE)
+
+    joyData <- openxlsx::readWorkbook(xlsxFile = "emotions-final.xlsx", sheet = "Joy", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+    
+    if (length(tokenize[[1]]) == 0) {
+      shiny::showNotification(ui = "No post to analyze. Please fill Post Box above.", action = NULL, duration = 5, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
+    } else {
+      for (i in 1:length(tokenize[[1]])) {
+        for (j in 1:nrow(joyData)) {
+          if (is.na(joyData[j, 6])) {
+          } else if (tokenize[[1]][i] == joyData[j, 6]) {
+            for (k in 1:nrow(joyData)) {
+              if (is.na(joyData[k, 3])) {
+              } else if (tokenize[[1]][i+1] == joyData[k, 3]) {
+                countJoyHighest <- countJoyHighest + 1
+                countJoyNeutral <- countJoyNeutral - 1
+                break()
+              }
+    
+              if (is.na(joyData[k, 4])) {
+              } else if (tokenize[[1]][i+1] == joyData[k, 4]) {
+                countJoyHighest <- countJoyHighest + 1
+                countJoyHigh <- countJoyHigh - 1
+                break()
+              }
+    
+              if (is.na(joyData[k, 5])) {
+              } else if (tokenize[[1]][i+1] == joyData[k, 5]) {
+                countJoyHighest <- countJoyHighest + 1
+                countJoyHigher <- countJoyHigher - 1
+                break()
+              }
+            }
+            break()
+          }
+          
+          if (is.na(joyData[j, 3])) {
+          } else if (tokenize[[1]][i] == joyData[j, 3]) {
+            countJoyNeutral <- countJoyNeutral + 1
+            break()
+          }
+          
+          if (is.na(joyData[j, 4])) {
+          } else if (tokenize[[1]][i] == joyData[j, 4]) {
+            countJoyHigh <- countJoyHigh + 1
+            break()
+          }
+          
+          if (is.na(joyData[j, 5])) {
+          } else if (tokenize[[1]][i] == joyData[j, 5]) {
+            countJoyHigher <- countJoyHigher + 1
+            break()
+          }
+        }
+      }  
+    }
+    
+    
+    print(countJoyNeutral)
+    print(countJoyHigh)
+    print(countJoyHigher)
+    print(countJoyHighest)
+    
+    output$joyBox <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = 
+        base::sum(countJoyNeutral, countJoyHigh, countJoyHigher, countJoyHighest), subtitle = "Total joy words", icon = 
+          shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1)
+    })
+    output$JoyLowestBox <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Lowest Joy", value = 0, subtitle = "Total lowest joy words", icon = 
+        shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE)
+    })
+    output$JoyLowBox <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Low Joy", value = 0, subtitle = "Total low joy words", icon = 
+          shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE)
+    })
+    output$JoyNeutralBox <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Neutral Joy", value = countJoyNeutral, subtitle = "Total neutral joy words", icon = 
+          shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1)
+    })
+    output$JoyHighBox <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "High Joy", value = countJoyHigh, subtitle = "Total high joy words", icon = 
+          shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1)
+    })
+    output$JoyHigherBox <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Higher Joy", value = countJoyHigher, subtitle = "Total higher joy words", icon = 
+          shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1)
+    })
+    output$JoyHighestBox <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Highest Joy", value = countJoyHighest, subtitle = "Total highest joy words", icon = 
+          shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1)
+    })
   })
+  
+  
 })
