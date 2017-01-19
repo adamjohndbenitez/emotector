@@ -1,10 +1,13 @@
 shiny::shinyServer(function(input, output, session) {
-  base::load(file = "fb_oauth")
+  # base::load(file = "fb_oauth")
 
   shiny::updateDateRangeInput(session = session, inputId = "dateRangeId", start = base::Sys.Date() - 10, end = base::Sys.Date())
 
   shiny::observeEvent(input$searchButton, {
-    base::tryCatch(expr = {
+    # fb_oauth <- "EAACEdEose0cBADQoZB0CnWWRnYlG1MdXGEZAOXeWc6yKW494e6GypZCWYHwxp1ycjey5gS45xTinaHBzZBXNxY9YGl7amnV5Qnp7h8h4rD7kY3z12Hcz2s1IBgTiPeKyo2AXh1hQHz1kZBxTBROws6eydmfMuTiNQ2SaDMgSZCSFB1k7qVb39ZB8Dam45bCh48ZD"
+    base::load(file = "fb_oauth") 
+    
+    # base::tryCatch(expr = {
       listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], verbose = FALSE)
 
       output$postListUIId <- shiny::renderUI({
@@ -16,13 +19,13 @@ shiny::shinyServer(function(input, output, session) {
       })
       
       shiny::showNotification(ui = "We're good...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
-    }, error = function(e) {
-      shiny::showNotification(ui = "The Facebook page or group ID you’re using is not correct or invalid. Click link below", action = 
-        shiny::tags$a(href = "https://smashballoon.com/custom-facebook-feed/id/", "Ensure valid facebook page ID."), duration = NULL, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
-    }, warning = function(w) {
-      shiny::showNotification(ui = "Waring message.", duration = 5, closeButton = FALSE, type = "warning", session = shiny::getDefaultReactiveDomain())
-    }, finally = {
-    })
+    # }, error = function(e) {
+    #   shiny::showNotification(ui = "The Facebook page or group ID you’re using is not correct or invalid. Click link below", action =
+    #     shiny::tags$a(href = "https://smashballoon.com/custom-facebook-feed/id/", "Ensure valid facebook page ID."), duration = NULL, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
+    # }, warning = function(w) {
+    #   shiny::showNotification(ui = "Waring message.", duration = 5, closeButton = FALSE, type = "warning", session = shiny::getDefaultReactiveDomain())
+    # }, finally = {
+    # })
 
     output$viewPostUIId <- shiny::renderUI({
       shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary",
@@ -45,7 +48,13 @@ shiny::shinyServer(function(input, output, session) {
     tokenize <- tokenizers::tokenize_words(x = input$manualPostTextAreaId, lowercase = TRUE, stopwords = NULL, simplify = FALSE)
 
     joyData <- openxlsx::readWorkbook(xlsxFile = "emotions-final.xlsx", sheet = "Joy", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+    countJoyNeutral <- 0
     
+    countJoyHigh <- 0
+    
+    countJoyHigher <- 0
+    
+    countJoyHighest <- 0
     if (length(tokenize[[1]]) == 0) {
       shiny::showNotification(ui = "No post to analyze. Please fill Post Box above.", action = NULL, duration = 5, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
     } else {
