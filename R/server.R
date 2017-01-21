@@ -8,7 +8,7 @@ shiny::shinyServer(function(input, output, session) {
     base::load(file = "fb_oauth") 
     
     # base::tryCatch(expr = {
-      listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], verbose = FALSE)
+      listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2])
 
       output$postListUIId <- shiny::renderUI({
         shiny::selectInput(inputId = "postListId", label = "Select Post", choices = 1:base::length(listOfPosts$message))
@@ -58,17 +58,17 @@ shiny::shinyServer(function(input, output, session) {
     if (length(tokenize[[1]]) == 0) {
       shiny::showNotification(ui = "No post to analyze. Please fill Post Box above.", action = NULL, duration = 5, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
     } else {
-      for (i in 1:length(tokenize[[1]])) {
+      for (i in 1:length(tokenize[[1]])) {#looping of words
         for (j in 1:nrow(joyData)) {
-          if (is.na(joyData[j, 6])) {
-          } else if (tokenize[[1]][i] == joyData[j, 6]) {
+          if (is.na(joyData[j, 6])) { #trapping for NA values in excel
+          } else if (tokenize[[1]][i] == joyData[j, 6]) { #look for intensifier
             for (k in 1:nrow(joyData)) {
               if (is.na(joyData[k, 3])) {
               } else if (tokenize[[1]][i+1] == joyData[k, 3]) {
                 countJoyHighest <- countJoyHighest + 1
                 countJoyNeutral <- countJoyNeutral - 1
                 break()
-              }
+              } # look up words in neutral column then add intensifier
     
               if (is.na(joyData[k, 4])) {
               } else if (tokenize[[1]][i+1] == joyData[k, 4]) {
