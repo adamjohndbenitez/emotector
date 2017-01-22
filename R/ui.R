@@ -32,14 +32,23 @@ shinydashboard::dashboardPage(skin = "blue",
       shiny::uiOutput(outputId = "viewPostUIId")
     ),
     shiny::fluidRow(
-      shinydashboard::valueBoxOutput(outputId = "joyBox", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "JoyLowestBox", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "JoyLowBox", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "JoyNeutralBox", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "JoyHighBox", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "JoyHigherBox", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "JoyHighestBox", width = 3)
+      shinydashboard::valueBoxOutput(outputId = "joyBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "joyHighestBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "joyHigherBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "joyHighBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "joyNeutralBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "joyLowBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "joyLowestBoxId", width = 3)
     ),
+    # shiny::fluidRow(
+    #   shinydashboard::valueBoxOutput(outputId = "sadnessBoxId", width = 3),
+    #   shinydashboard::infoBoxOutput(outputId = "sadnessHighestBoxId", width = 3),
+    #   shinydashboard::infoBoxOutput(outputId = "sadnessHigherBoxId", width = 3),
+    #   shinydashboard::infoBoxOutput(outputId = "sadnessHighBoxId", width = 3),
+    #   shinydashboard::infoBoxOutput(outputId = "sadnessNeutralBoxId", width = 3),
+    #   shinydashboard::infoBoxOutput(outputId = "sadnessLowBoxId", width = 3),
+    #   shinydashboard::infoBoxOutput(outputId = "sadnessLowestBoxId", width = 3)
+    # ),
     shiny::tags$head(
       shiny::tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     )
