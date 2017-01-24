@@ -50,13 +50,13 @@ shinydashboard::dashboardPage(skin = "blue",
       shinydashboard::infoBoxOutput(outputId = "sadnessLowestBoxId", width = 3)
     ),
     shiny::fluidRow(
-      shinydashboard::valueBoxOutput(outputId = "fearBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearHighestBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearHigherBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearHighBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearNeutralBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearLowBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearLowestBoxId", width = 3)
+      shinydashboard::valueBoxOutput(outputId = "angerBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "angerHighestBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "angerHigherBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "angerHighBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "angerNeutralBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "angerLowBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "angerLowestBoxId", width = 3)
     ),
     shiny::fluidRow(
       shinydashboard::valueBoxOutput(outputId = "disgustBoxId", width = 3),
@@ -68,14 +68,15 @@ shinydashboard::dashboardPage(skin = "blue",
       shinydashboard::infoBoxOutput(outputId = "disgustLowestBoxId", width = 3)
     ),
     shiny::fluidRow(
-      shinydashboard::valueBoxOutput(outputId = "angerBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerHighestBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerHigherBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerHighBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerNeutralBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerLowBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerLowestBoxId", width = 3)
+      shinydashboard::valueBoxOutput(outputId = "fearBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "fearHighestBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "fearHigherBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "fearHighBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "fearNeutralBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "fearLowBoxId", width = 3),
+      shinydashboard::infoBoxOutput(outputId = "fearLowestBoxId", width = 3)
     ),
+    
     shiny::tags$head(
       shiny::tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     )
