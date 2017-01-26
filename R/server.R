@@ -35,15 +35,6 @@ shiny::shinyServer(function(input, output, session) {
   })
 
   shiny::observeEvent(input$submitManualPostId, {
-    
-    shinyjs::hide("joyBoxId")
-    shinyjs::hide("joyHighestBoxId")
-    shinyjs::hide("joyHigherBoxId")
-    shinyjs::hide("joyHighBoxId")
-    shinyjs::hide("joyNeutralBoxId")
-    shinyjs::hide("joyLowBoxId")
-    shinyjs::hide("joyLowestBoxId")
-    
     output$viewPostUIId <- shiny::renderUI({
       shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary",
         shiny::textOutput(outputId = "viewPostId")
@@ -897,398 +888,337 @@ shiny::shinyServer(function(input, output, session) {
       
     #----------START JOY----------
     
-    if (sumCountJoy != 0) {
-      output$joyBoxId <- shinydashboard::renderValueBox({
-        shinydashboard::valueBox(value = shiny::tagList(
-            sumWeightsJoy, 
-            shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-          ), subtitle = shiny::tagList(
-            sumCountJoy, " - total word/s found" 
-          ), icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1
-        )
-      })
-      if (finalCountJoyHighest != 0) {
-        output$joyHighestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Highest Joy",
-            value = shiny::tagList(
-              finalWeightJoyHighest,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountJoyHighest, " - word/s found"),
-            icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1
-          )
-        })
-      }
-      print(finalCountJoyHighest)
-      if (finalCountJoyHigher != 0) {
-        output$joyHigherBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Higher Joy",
-            value = shiny::tagList(
-              finalWeightJoyHigher,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountJoyHigher, " - word/s found"),
-            icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1
-          )
-        })
-      }
-      if (finalCountJoyHigh != 0) {
-        output$joyHighBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "High Joy",
-            value = shiny::tagList(
-              finalWeightJoyHigh,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountJoyHigh, " - word/s found"),
-            icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1
-          )
-        })
-      }
-      if (finalCountJoyNeutral != 0) {
-        output$joyNeutralBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Neutral Joy",
-            value = shiny::tagList(
-              finalWeightJoyNeutral,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountJoyNeutral, " - word/s found"),
-            icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE
-          )
-        })
-      }
-      if (finalCountJoyLow != 0) {
-        output$joyLowBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Low Joy", 
-            value = shiny::tagList(
-              finalWeightJoyLow,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountJoyLow, " - word/s found"), 
-            icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE)
-        })
-      }
-      if (finalCountJoyLowest != 0) {
-        output$joyLowestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Lowest Joy", 
-            value = shiny::tagList(
-              finalWeightJoyLowest,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountJoyLowest, " - word/s found"), 
-            icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE)
-        })
-      }
-    }
+    output$joyBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          sumWeightsJoy, 
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          sumCountJoy, " - total word/s found" 
+        ), icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1
+      )
+    })
+    output$joyHighestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Highest Joy",
+        value = shiny::tagList(
+          finalWeightJoyHighest,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountJoyHighest, " - word/s found"),
+        icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1
+      )
+    })
+    output$joyHigherBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Higher Joy",
+        value = shiny::tagList(
+          finalWeightJoyHigher,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountJoyHigher, " - word/s found"),
+        icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1
+      )
+    })
+    output$joyHighBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "High Joy",
+        value = shiny::tagList(
+          finalWeightJoyHigh,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountJoyHigh, " - word/s found"),
+        icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1
+      )
+    })
+    output$joyNeutralBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Neutral Joy",
+        value = shiny::tagList(
+          finalWeightJoyNeutral,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountJoyNeutral, " - word/s found"),
+        icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE
+      )
+    })
+    output$joyLowBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Low Joy", 
+        value = shiny::tagList(
+          finalWeightJoyLow,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountJoyLow, " - word/s found"), 
+        icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE)
+    })
+    output$joyLowestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Lowest Joy", 
+        value = shiny::tagList(
+          finalWeightJoyLowest,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountJoyLowest, " - word/s found"), 
+        icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE)
+    })
     
     #----------END JOY----------
     
     #----------START SADNESS----------
     
-    if (sumCountSadness != 0) {
-      output$sadnessBoxId <- shinydashboard::renderValueBox({
-        shinydashboard::valueBox(value = shiny::tagList(
-            sumWeightsSadness,
-            shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-          ), subtitle = shiny::tagList(
-            sumCountSadness, " - total word/s found"
-          ), icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1
-        )
-      })
-      if (finalCountSadnessHighest != 0) {
-        output$sadnessHighestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Highest Sadness",
-            value = shiny::tagList(
-              finalWeightSadnessHighest,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountSadnessHighest, " - word/s found"),
-            icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1
-          )
-        })
-      }
-      if (finalCountSadnessHigher != 0) {
-        output$sadnessHigherBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Higher Sadness",
-            value = shiny::tagList(
-              finalWeightSadnessHigher,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountSadnessHigher, " - word/s found"),
-            icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1
-          )
-        })
-      }
-      if (finalCountSadnessHigh != 0) {
-        output$sadnessHighBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "High Sadness",
-            value = shiny::tagList(
-              finalWeightSadnessHigh,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountSadnessHigh, " - word/s found"),
-            icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1
-          )
-        })
-      }
-      if (finalCountSadnessNeutral != 0) {
-        output$sadnessNeutralBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Neutral Sadness",
-            value = shiny::tagList(
-              finalWeightSadnessNeutral,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountSadnessNeutral, " - word/s found"),
-            icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1, fill = TRUE
-          )
-        })
-      }
-      if (finalCountSadnessLow != 0) {
-        output$sadnessLowBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Low Sadness",
-            value = shiny::tagList(
-              finalWeightSadnessLow,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountSadnessLow, " - word/s found"),
-            icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1, fill = TRUE)
-        })
-      }
-      if (finalCountSadnessLowest != 0) {
-        output$sadnessLowestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Lowest Sadness",
-            value = shiny::tagList(
-              finalWeightSadnessLowest,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountSadnessLowest, " - word/s found"),
-            icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1, fill = TRUE)
-        })
-      }
-    }
+    output$sadnessBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          sumWeightsSadness,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          sumCountSadness, " - total word/s found"
+        ), icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1
+      )
+    })
+    output$sadnessHighestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Highest Sadness",
+        value = shiny::tagList(
+          finalWeightSadnessHighest,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountSadnessHighest, " - word/s found"),
+        icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1
+      )
+    })
+    output$sadnessHigherBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Higher Sadness",
+        value = shiny::tagList(
+          finalWeightSadnessHigher,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountSadnessHigher, " - word/s found"),
+        icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1
+      )
+    })
+    output$sadnessHighBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "High Sadness",
+        value = shiny::tagList(
+          finalWeightSadnessHigh,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountSadnessHigh, " - word/s found"),
+        icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1
+      )
+    })
+    output$sadnessNeutralBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Neutral Sadness",
+        value = shiny::tagList(
+          finalWeightSadnessNeutral,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountSadnessNeutral, " - word/s found"),
+        icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1, fill = TRUE
+      )
+    })
+    output$sadnessLowBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Low Sadness",
+        value = shiny::tagList(
+          finalWeightSadnessLow,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountSadnessLow, " - word/s found"),
+        icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1, fill = TRUE)
+    })
+    output$sadnessLowestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Lowest Sadness",
+        value = shiny::tagList(
+          finalWeightSadnessLowest,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountSadnessLowest, " - word/s found"),
+        icon = shiny::icon(name = "frown-o", class = "fa-1x", lib = "font-awesome"), color = "blue", width = 1, fill = TRUE)
+    })
     
     #----------END SADNESS----------
     
     #----------START ANGER----------
     
-    if (sumCountAnger != 0) {
-      output$angerBoxId <- shinydashboard::renderValueBox({
-        shinydashboard::valueBox(value = shiny::tagList(
-            sumWeightsAnger,
-            shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-          ), subtitle = shiny::tagList(
-            sumCountAnger, " - total word/s found"
-          ), icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
-        )
-      })
-      if (finalCountAngerHighest != 0) {
-        output$angerHighestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Highest anger",
-            value = shiny::tagList(
-              finalWeightJoyHighest,
-              0,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountJoyHighest, " - word/s found"),
-            icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
-          )
-        })
-      }
-      if (finalCountAngerHigher != 0) {
-        output$angerHigherBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Higher anger",
-            value = shiny::tagList(
-              finalWeightJoyHigher,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountJoyHigher, " - word/s found"),
-            icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
-          )
-        })
-      }
-      if (finalCountAngerHigh != 0) {
-        output$angerHighBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "High anger",
-            value = shiny::tagList(
-              finalWeightJoyHigh,
-              0,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountJoyHigh, " - word/s found"),
-            icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
-          )
-        })
-      }
-      if (finalCountAngerNeutral != 0) {
-        output$angerNeutralBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Neutral anger",
-            value = shiny::tagList(
-              finalWeightAngerNeutral,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountAngerNeutral, " - word/s found"),
-            icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1, fill = TRUE
-          )
-        })
-      }
-      if (finalCountAngerLow != 0) {
-        output$angerLowBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Low anger",
-            value = shiny::tagList(
-              finalWeightAngerLow,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountAngerLow, " - word/s found"),
-            icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1, fill = TRUE)
-        })
-      }
-      if (finalCountAngerLowest != 0) {
-        output$angerLowestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Lowest anger",
-            value = shiny::tagList(
-              finalWeightAngerLowest,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountAngerLowest, " - word/s found"),
-            icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1, fill = TRUE)
-        })  
-      }
-    }
+    output$angerBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          sumWeightsAnger,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          sumCountAnger, " - total word/s found"
+        ), icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
+      )
+    })
+    output$angerHighestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Highest anger",
+        value = shiny::tagList(
+          finalWeightJoyHighest,
+          0,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountJoyHighest, " - word/s found"),
+        icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
+      )
+    })
+    output$angerHigherBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Higher anger",
+        value = shiny::tagList(
+          finalWeightJoyHigher,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountJoyHigher, " - word/s found"),
+        icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
+      )
+    })
+    output$angerHighBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "High anger",
+        value = shiny::tagList(
+          finalWeightJoyHigh,
+          0,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountJoyHigh, " - word/s found"),
+        icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
+      )
+    })
+    output$angerNeutralBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Neutral anger",
+        value = shiny::tagList(
+          finalWeightAngerNeutral,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountAngerNeutral, " - word/s found"),
+        icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1, fill = TRUE
+      )
+    })
+    output$angerLowBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Low anger",
+        value = shiny::tagList(
+          finalWeightAngerLow,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountAngerLow, " - word/s found"),
+        icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1, fill = TRUE)
+    })
+    output$angerLowestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Lowest anger",
+        value = shiny::tagList(
+          finalWeightAngerLowest,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountAngerLowest, " - word/s found"),
+        icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1, fill = TRUE)
+    })
     
     #----------END ANGER----------
     
     #----------START DISGUST----------
     
-    if (sumCountDisgust != 0) {
-      output$disgustBoxId <- shinydashboard::renderValueBox({
-        shinydashboard::valueBox(value = shiny::tagList(
-            sumWeightsDisgust,
-            shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-          ), subtitle = shiny::tagList(
-            sumCountDisgust, " - total word/s found",
-            0
-          ), icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1
-        )
-      })
-      if (finalCountDisgustHighest != 0) {
-        output$disgustHighestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Highest disgust",
-            value = shiny::tagList(
-              finalWeightDisgustHighest,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountDisgustHighest, " - word/s found"),
-            icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1
-          )
-        })
-      }
-      if (finalCountDisgustHigher != 0) {
-        output$disgustHigherBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Higher disgust",
-            value = shiny::tagList(
-              finalWeightFearHigher,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountDisgustHigher, " - word/s found"),
-            icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1
-          )
-        })
-      }
-      if (finalCountDisgustNeutral != 0) {
-        output$disgustNeutralBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Neutral disgust",
-            value = shiny::tagList(
-              finalWeightDisgustNeutral,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountDisgustNeutral, " - word/s found"),
-            icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1, fill = TRUE
-          )
-        })  
-      }
-      if (finalCountDisgustLow != 0) {
-        output$disgustLowBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Low disgust",
-            value = shiny::tagList(
-              finalWeightDisgustLow,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountDisgustLow, " - word/s found"),
-            icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1, fill = TRUE)
-        })
-      }
-      if (finalCountDisgustLowest) {
-        output$disgustLowestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Lowest disgust",
-            value = shiny::tagList(
-              finalWeightCountLowest,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountDisgustLowest, " - word/s found"),
-            icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1, fill = TRUE)
-        })
-      }
-      
-    }
+    output$disgustBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          sumWeightsDisgust,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          sumCountDisgust, " - total word/s found",
+          0
+        ), icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1
+      )
+    })
+    output$disgustHighestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Highest disgust",
+        value = shiny::tagList(
+          finalWeightDisgustHighest,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountDisgustHighest, " - word/s found"),
+        icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1
+      )
+    })
+    output$disgustHigherBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Higher disgust",
+        value = shiny::tagList(
+          finalWeightFearHigher,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountDisgustHigher, " - word/s found"),
+        icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1
+      )
+    })
+    output$disgustHighBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "High disgust",
+        value = shiny::tagList(
+          finalWeightFearHigh,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountDisgustHigh, " - word/s found"),
+        icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1
+      )
+    })
+    output$disgustNeutralBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Neutral disgust",
+        value = shiny::tagList(
+          finalWeightDisgustNeutral,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountDisgustNeutral, " - word/s found"),
+        icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1, fill = TRUE
+      )
+    })  
+    output$disgustLowBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Low disgust",
+        value = shiny::tagList(
+          finalWeightDisgustLow,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountDisgustLow, " - word/s found"),
+        icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1, fill = TRUE)
+    })
+    output$disgustLowestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Lowest disgust",
+        value = shiny::tagList(
+          finalWeightDisgustLowest,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountDisgustLowest, " - word/s found"),
+        icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1, fill = TRUE)
+    })
     
     #----------END DISGUST----------
     
     #----------START FEAR----------
     
-    if (sumCountFear != 0) {
-      output$fearBoxId <- shinydashboard::renderValueBox({
-        shinydashboard::valueBox(value = shiny::tagList(
-            sumWeightsFear,
-            shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-          ), subtitle = shiny::tagList(
-            sumCountFear, " - total word/s found"
-          ), icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1
-        )
-      })
-      if (finalCountFearHighest != 0) {
-        output$fearHighestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Highest fear",
-            value = shiny::tagList(
-              finalWeightFearHighest,
-              0,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountFearHighest, " - word/s found"),
-            icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1
-          )
-        })
-      }
-      if (finalCountFearHigher != 0) {
-        output$fearHigherBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Highest fear",
-            value = shiny::tagList(
-              finalWeightFearHigher,
-              0,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountFearHigher, " - word/s found"),
-            icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1
-          )
-        })
-      }
-      if (finalCountFearHigh != 0) {
-        output$fearHighBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "High fear",
-            value = shiny::tagList(
-              finalWeightFearHigh,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountFearHigh, " - word/s found"),
-            icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1
-          )
-        })
-      }
-      if (finalCountFearNeutral != 0) {
-        output$fearNeutralBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Neutral fear",
-            value = shiny::tagList(
-              finalWeightFearNeutral,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountFearNeutral, " - word/s found"),
-            icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1, fill = TRUE
-          )
-        })
-      }
-      if (finalCountFearLow != 0) {
-        output$fearLowBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Low fear",
-            value = shiny::tagList(
-              finalWeightFearLow,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountFearLow, " - word/s found"),
-            icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1, fill = TRUE)
-        })
-      }
-      if (finalCountFearLowest != 0) {
-        output$fearLowestBoxId <- shinydashboard::renderInfoBox({
-          shinydashboard::infoBox(title = "Lowest fear",
-            value = shiny::tagList(
-              finalWeightFearLowest,
-              shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-            ), subtitle = shiny::tagList(finalCountFearLowest, " - word/s found"),
-            icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1, fill = TRUE)
-        })
-      }
-    }
-
+    output$fearBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          sumWeightsFear,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          sumCountFear, " - total word/s found"
+        ), icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1
+      )
+    })
+    output$fearHighestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Highest fear",
+        value = shiny::tagList(
+          finalWeightFearHighest,
+          0,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountFearHighest, " - word/s found"),
+        icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1
+      )
+    })
+    output$fearHigherBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Highest fear",
+        value = shiny::tagList(
+          finalWeightFearHigher,
+          0,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountFearHigher, " - word/s found"),
+        icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1
+      )
+    })
+    output$fearHighBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "High fear",
+        value = shiny::tagList(
+          finalWeightFearHigh,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountFearHigh, " - word/s found"),
+        icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1
+      )
+    })
+    output$fearNeutralBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Neutral fear",
+        value = shiny::tagList(
+          finalWeightFearNeutral,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountFearNeutral, " - word/s found"),
+        icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1, fill = TRUE
+      )
+    })
+    output$fearLowBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Low fear",
+        value = shiny::tagList(
+          finalWeightFearLow,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountFearLow, " - word/s found"),
+        icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1, fill = TRUE)
+    })
+    output$fearLowestBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Lowest fear",
+        value = shiny::tagList(
+          finalWeightFearLowest,
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(finalCountFearLowest, " - word/s found"),
+        icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1, fill = TRUE)
+    })
+    
     #----------END FEAR----------
   })
   
