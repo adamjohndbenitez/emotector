@@ -1,3 +1,4 @@
+shinyjs::useShinyjs()
 shinydashboard::dashboardPage(skin = "blue",
   shinydashboard::dashboardHeader(title = 
     shiny::div(
@@ -28,59 +29,72 @@ shinydashboard::dashboardPage(skin = "blue",
     )
   ),
   shinydashboard::dashboardBody(
-    shiny::fluidRow(
-      shiny::uiOutput(outputId = "viewPostUIId")
+      shiny::fluidRow(
+        shiny::uiOutput(outputId = "viewPostUIId")
+      ),
+      shiny::fluidRow(
+        # conditionalPanel(condition = "sumCountJoy != 0",
+          shinydashboard::valueBoxOutput(outputId = "joyBoxId", width = 3),
+        # ),
+        # conditionalPanel(condition = "finalCountJoyHighest != 0",
+          shinydashboard::infoBoxOutput(outputId = "joyHighestBoxId", width = 3),
+        # ),
+        # conditionalPanel(condition = "finalCountJoyHigher != 0",
+          shinydashboard::infoBoxOutput(outputId = "joyHigherBoxId", width = 3),
+        # ),
+        # conditionalPanel(condition = "finalCountJoyHigh != 0",
+          shinydashboard::infoBoxOutput(outputId = "joyHighBoxId", width = 3),
+        # ),
+        # conditionalPanel(condition = "finalCountJoyNeutral != 0",
+          shinydashboard::infoBoxOutput(outputId = "joyNeutralBoxId", width = 3),
+        # ),
+        # conditionalPanel(condition = "finalCountJoyLow != 0",
+        shinydashboard::infoBoxOutput(outputId = "joyLowBoxId", width = 3),
+        # ),
+        # conditionalPanel(condition = "finalCountJoyLowest != 0",
+        shinydashboard::infoBoxOutput(outputId = "joyLowestBoxId", width = 3)
+        # )
+      ),
+      shiny::fluidRow(
+        shinydashboard::valueBoxOutput(outputId = "sadnessBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "sadnessHighestBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "sadnessHigherBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "sadnessHighBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "sadnessNeutralBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "sadnessLowBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "sadnessLowestBoxId", width = 3)
+      ),
+      shiny::fluidRow(
+        shinydashboard::valueBoxOutput(outputId = "angerBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "angerHighestBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "angerHigherBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "angerHighBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "angerNeutralBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "angerLowBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "angerLowestBoxId", width = 3)
+      ),
+      shiny::fluidRow(
+        shinydashboard::valueBoxOutput(outputId = "disgustBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "disgustHighestBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "disgustHigherBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "disgustHighBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "disgustNeutralBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "disgustLowBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "disgustLowestBoxId", width = 3)
+      ),
+      shiny::fluidRow(
+        shinydashboard::valueBoxOutput(outputId = "fearBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "fearHighestBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "fearHigherBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "fearHighBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "fearNeutralBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "fearLowBoxId", width = 3),
+        shinydashboard::infoBoxOutput(outputId = "fearLowestBoxId", width = 3)
+      )
     ),
-    shiny::fluidRow(
-      shinydashboard::valueBoxOutput(outputId = "joyBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "joyHighestBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "joyHigherBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "joyHighBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "joyNeutralBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "joyLowBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "joyLowestBoxId", width = 3)
-    ),
-    shiny::fluidRow(
-      shinydashboard::valueBoxOutput(outputId = "sadnessBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "sadnessHighestBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "sadnessHigherBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "sadnessHighBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "sadnessNeutralBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "sadnessLowBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "sadnessLowestBoxId", width = 3)
-    ),
-    shiny::fluidRow(
-      shinydashboard::valueBoxOutput(outputId = "angerBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerHighestBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerHigherBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerHighBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerNeutralBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerLowBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "angerLowestBoxId", width = 3)
-    ),
-    shiny::fluidRow(
-      shinydashboard::valueBoxOutput(outputId = "disgustBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "disgustHighestBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "disgustHigherBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "disgustHighBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "disgustNeutralBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "disgustLowBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "disgustLowestBoxId", width = 3)
-    ),
-    shiny::fluidRow(
-      shinydashboard::valueBoxOutput(outputId = "fearBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearHighestBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearHigherBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearHighBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearNeutralBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearLowBoxId", width = 3),
-      shinydashboard::infoBoxOutput(outputId = "fearLowestBoxId", width = 3)
-    ),
-    
     shiny::tags$head(
       shiny::tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     )
-  )
 )
 
 
