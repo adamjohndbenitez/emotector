@@ -1032,8 +1032,7 @@ shiny::shinyServer(function(input, output, session) {
     output$angerHighestBoxId <- shinydashboard::renderInfoBox({
       shinydashboard::infoBox(title = "Highest anger",
         value = shiny::tagList(
-          finalWeightJoyHighest,
-          0,
+          finalWeightAngerHighest,
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
         ), subtitle = shiny::tagList(finalCountJoyHighest, " - word/s found"),
         icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
@@ -1042,7 +1041,7 @@ shiny::shinyServer(function(input, output, session) {
     output$angerHigherBoxId <- shinydashboard::renderInfoBox({
       shinydashboard::infoBox(title = "Higher anger",
         value = shiny::tagList(
-          finalWeightJoyHigher,
+          finalWeightAngerHigher,
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
         ), subtitle = shiny::tagList(finalCountJoyHigher, " - word/s found"),
         icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
@@ -1051,8 +1050,7 @@ shiny::shinyServer(function(input, output, session) {
     output$angerHighBoxId <- shinydashboard::renderInfoBox({
       shinydashboard::infoBox(title = "High anger",
         value = shiny::tagList(
-          finalWeightJoyHigh,
-          0,
+          finalWeightAngerHigh,
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
         ), subtitle = shiny::tagList(finalCountJoyHigh, " - word/s found"),
         icon = shiny::icon(name = "hand-rock-o", class = "fa-1x", lib = "font-awesome"), color = "red", width = 1
