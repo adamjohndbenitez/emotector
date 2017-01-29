@@ -1,37 +1,81 @@
+require(magrittr)
+
 shiny::shinyServer(function(input, output, session) {
-  # base::load(file = "fb_oauth")
-
   shiny::updateDateRangeInput(session = session, inputId = "dateRangeId", start = base::Sys.Date() - 10, end = base::Sys.Date())
-
+  
+  output$dygraph <- dygraphs::renderDygraph({
+    dygraphs::dygraph(nhtemp, main = "New Haven Temperatures", ylab = "Temp (F)") %>%
+      dygraphs::dyOptions(drawGrid = input$showgrid)
+  })
+    
   shiny::observeEvent(input$searchButton, {
     # fb_oauth <- "EAACEdEose0cBADQoZB0CnWWRnYlG1MdXGEZAOXeWc6yKW494e6GypZCWYHwxp1ycjey5gS45xTinaHBzZBXNxY9YGl7amnV5Qnp7h8h4rD7kY3z12Hcz2s1IBgTiPeKyo2AXh1hQHz1kZBxTBROws6eydmfMuTiNQ2SaDMgSZCSFB1k7qVb39ZB8Dam45bCh48ZD"
     base::load(file = "fb_oauth") 
     
     base::tryCatch(expr = {
-      listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2])
+      listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], feed = FALSE, reactions = TRUE, verbose = TRUE)
+      progress <- shiny::Progress$new(session, min=1, max=15)
+      on.exit(progress$close())
 
+      progress$set(message = 'Calculation in progress',
+                   detail = 'This may take a while...')
+
+      for (i in 1:15) {
+        progress$set(value = i)
+        Sys.sleep(0.25)
+      }
       output$postListUIId <- shiny::renderUI({
-        shiny::selectInput(inputId = "postListId", label = "Select Post", choices = 1:base::length(listOfPosts$message))
-      })
-  
-      output$viewPostId <- shiny::renderText({
-        listOfPosts$message[as.numeric(input$postListId)]
+        shiny::selectInput(inputId = "postListId", label = "Select Post #", choices = 1:base::length(listOfPosts$message))
       })
       
+      output$viewPostId <- shiny::renderText({
+        listofComments <- Rfacebook::getPost(post = listOfPosts$id[as.numeric(input$postListId)], token = fb_oauth, n = base::as.numeric(input$numberOfComments), comments = TRUE, likes = TRUE)
+        
+          output$viewCommentsId <- shiny::renderTable(expr = {
+            if(length(listofComments$comments$message) != 0) {
+              listofComments$comments$message
+            }
+          }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "xs", width = "auto", rownames = TRUE, colnames = TRUE, na = NA)
+          
+        c("#", input$postListId, ":", listOfPosts$message[as.numeric(input$postListId)])
+      })
+      
+      # print(listofComments)
+      
+      output$viewPostUIId <- shiny::renderUI({
+        shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary", background = NULL, footer = 
+          shiny::downloadLink(outputId = "downloadCsvFileId", label = shiny::tagList(
+            shiny::icon(name = "download", class = "fa-1x", lib = "font-awesome"), "Download Posts")
+          ),
+          shiny::textOutput(outputId = "viewPostId")
+        )
+      })
+      
+      output$viewCommentsUIId <- shiny::renderUI({
+        shinydashboard::box(title = "Comments", width = 12, solidHeader = TRUE, status = "primary", 
+          shiny::tableOutput(outputId = "viewCommentsId")
+        )
+      })
+      
+      output$downloadCsvFileId <- shiny::downloadHandler(
+        filename = function() { paste("Facebook_Posts_", Sys.Date(), ".csv", sep = "") },
+        content = function(file) {
+          write.csv(x = listOfPosts, file = file)
+        }
+      )
+
       shiny::showNotification(ui = "We're good...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
      }, error = function(e) {
-       shiny::showNotification(ui = "The Facebook page or group ID you’re using is not correct or invalid. Click link below", action =
-         shiny::tags$a(href = "https://smashballoon.com/custom-facebook-feed/id/", "Ensure valid facebook page ID."), duration = NULL, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
+       shiny::showNotification(ui = "The Facebook page or group ID you’re using is not correct or invalid. Click link below", action = 
+        shiny::tagList(
+          shiny::tags$a(href = "https://smashballoon.com/custom-facebook-feed/id/", "Ensure valid facebook page ID."),
+          shiny::tags$a(href = "http://findmyfbid.com/", "Find your Facebook page ID.")
+        ), duration = 10, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
      }, warning = function(w) {
        shiny::showNotification(ui = "Waring message.", duration = 5, closeButton = FALSE, type = "warning", session = shiny::getDefaultReactiveDomain())
      }, finally = {
+       
      })
-
-    output$viewPostUIId <- shiny::renderUI({
-      shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary",
-        shiny::textOutput(outputId = "viewPostId")
-      )
-    })
   })
 
   shiny::observeEvent(input$submitManualPostId, {
@@ -589,7 +633,7 @@ shiny::shinyServer(function(input, output, session) {
               }
               
               if (is.na(angerData[l, 5])) {
-              } else if (tokenizeWords[[1]][j] == sadnessData[l, 5]) {
+              } else if (tokenizeWords[[1]][j] == angerData[l, 5]) {
                 tempCountAngerHigher <- tempCountAngerHigher + 1
                 break()
               }
