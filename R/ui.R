@@ -95,10 +95,15 @@ shinydashboard::dashboardPage(skin = "blue",
       )
     )
     ),
-      shiny::fluidRow(
+    shiny::fluidRow(
       shinydashboard::box(title = "Emotional Analysis", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
         shiny::checkboxInput("showgrid", label = "Show Grid", value = TRUE),
         dygraphs::dygraphOutput("dygraph")
+      )
+    ),
+    shiny::fluidRow(
+      shinydashboard::box(title = "Emotional Analysis", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
+        shiny::plotOutput("plot")
       )
     )
   ),

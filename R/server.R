@@ -7,6 +7,15 @@ shiny::shinyServer(function(input, output, session) {
     dygraphs::dygraph(nhtemp, main = "New Haven Temperatures", ylab = "Temp (F)") %>%
       dygraphs::dyOptions(drawGrid = input$showgrid)
   })
+  
+  output$plot <- renderPlot({
+    input$newplot
+    nr.prof <-
+      c(prof.pilots = 16, lawyers = 11, farmers = 10, salesmen = 9, physicians = 9,
+        mechanics = 6, policemen = 6, managers = 6, engineers = 5, teachers = 4,
+        housewives = 3, students = 3, armed.forces = 1)
+    graphics::barplot(nr.prof)
+  })
     
   shiny::observeEvent(input$searchButton, {
     # fb_oauth <- "EAACEdEose0cBADQoZB0CnWWRnYlG1MdXGEZAOXeWc6yKW494e6GypZCWYHwxp1ycjey5gS45xTinaHBzZBXNxY9YGl7amnV5Qnp7h8h4rD7kY3z12Hcz2s1IBgTiPeKyo2AXh1hQHz1kZBxTBROws6eydmfMuTiNQ2SaDMgSZCSFB1k7qVb39ZB8Dam45bCh48ZD"
