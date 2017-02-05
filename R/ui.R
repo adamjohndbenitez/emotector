@@ -96,14 +96,13 @@ shinydashboard::dashboardPage(skin = "blue",
     )
     ),
     shiny::fluidRow(
-      shinydashboard::box(title = "Emotional Analysis", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
-        shiny::checkboxInput("showgrid", label = "Show Grid", value = TRUE),
-        dygraphs::dygraphOutput("dygraph")
+      shinydashboard::box(title = "Summary of Weighted Emotions", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
+        shiny::plotOutput("plot")
       )
     ),
     shiny::fluidRow(
-      shinydashboard::box(title = "Emotional Analysis", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
-        shiny::plotOutput("plot")
+      shinydashboard::box(title = "Degree of Emotions (Count-based Stacked Barplot)", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
+        shiny::plotOutput("plot1")
       )
     )
   ),
