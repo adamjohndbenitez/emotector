@@ -87,15 +87,44 @@ shiny::shinyServer(function(input, output, session) {
   })
 
   shiny::observeEvent(input$submitManualPostId, {
-    output$viewPostUIId <- shiny::renderUI({
-      shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary",
-        shiny::textOutput(outputId = "viewPostId")
-      )
-    })
+    analyzePostAndItsComments <- c()
+    if ((!is.null(input$searchText) & (is.null(input$manualPostTextAreaId) | !is.null(input$manualPostTextAreaId)))) {
+      base::load(file = "fb_oauth")
+      
+      base::tryCatch(expr = {
+        listOfPostsForAnalysis <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], feed = FALSE, reactions = TRUE, verbose = TRUE)
+          analyzePostAndItsComments <- append(x = analyzePostAndItsComments, values = stringi::stri_enc_toutf8(listOfPostsForAnalysis$message))
+        for (y in 1:length(listOfPostsForAnalysis$message)) {
+          listofCommentsForAnalysis <- Rfacebook::getPost(post = listOfPostsForAnalysis$id[y], token = fb_oauth, n = base::as.numeric(input$numberOfComments), comments = TRUE, likes = TRUE)
+          analyzePostAndItsComments <- append(x = analyzePostAndItsComments, values = stringi::stri_enc_toutf8(listofCommentsForAnalysis$comments$message))
+        }
+        
+        shiny::showNotification(ui = "Finished Analyzing...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
+      }, error = function(e) {
+       shiny::showNotification(ui = "The Facebook page or group ID you’re using is not correct or invalid. Click link below", action =
+        shiny::tagList(
+          shiny::tags$a(href = "https://smashballoon.com/custom-facebook-feed/id/", "Ensure valid facebook page ID."),
+          shiny::tags$a(href = "http://findmyfbid.com/", "Find your Facebook page ID.")
+        ), duration = 10, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
+      }, warning = function(w) {
+        shiny::showNotification(ui = "Waring message.", duration = 5, closeButton = FALSE, type = "warning", session = shiny::getDefaultReactiveDomain())
+      }, finally = {
 
-    output$viewPostId <- shiny::renderText({
-      input$manualPostTextAreaId
-    })
+      })
+      
+    } else {
+      analyzePostAndItsComments <- input$manualPostTextAreaId
+      
+      output$viewPostUIId <- shiny::renderUI({
+        shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary",
+          shiny::textOutput(outputId = "viewPostId")
+        )
+      })
+  
+      output$viewPostId <- shiny::renderText({
+        input$manualPostTextAreaId
+      })
+    }
     
     # -----------------START-EMOTIONAL-ANALYSIS------------------
         
@@ -106,80 +135,89 @@ shiny::shinyServer(function(input, output, session) {
     fearData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Fear", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
     contrastingConjunctions <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Constrasting Conjunctions", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
     
-    tokenizeSentences <- tokenizers::tokenize_sentences(x = input$manualPostTextAreaId, lowercase = FALSE, strip_punctuation = FALSE, simplify = FALSE)
+    progress <- shiny::Progress$new(session, min = 1, max = length(analyzePostAndItsComments))
+    on.exit(progress$close())
     
-    finalCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    sumWeights <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
-    sumCounts <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
+    progress$set(message = "Calculation in progress", detail = "This may take a while...")
     
-    if (length(tokenizeSentences[[1]]) == 0) {
-      shiny::showNotification(ui = "No post to analyze. Please fill Post Box above.", action = NULL, duration = 5, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
-    } else {
-      for (i in 1:length(tokenizeSentences[[1]])) {
-        tokenizeWords <- tokenizers::tokenize_words(x = tokenizeSentences[[1]][i], lowercase = TRUE, stopwords = NULL, simplify = FALSE)
-        
-        tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-        
-        if (length(tokenizeWords[[1]]) == 0) {
-          shiny::showNotification(ui = "No post to analyze. Please fill Post Box above.", action = NULL, duration = 5, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
-        } else {
-          for (j in 1:length(tokenizeWords[[1]])) { #looping of words
-            for (k in 1:nrow(contrastingConjunctions)) { #check if there are contrasting conjunctions.
-              if (tokenizeWords[[1]][j] == contrastingConjunctions[k, 1]) {
-                tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    for (w in 1:length(analyzePostAndItsComments)) {
+      progress$set(value = w)
+      Sys.sleep(0.25)
+      tokenizeSentences <- tokenizers::tokenize_sentences(x = analyzePostAndItsComments[w], lowercase = FALSE, strip_punctuation = FALSE, simplify = FALSE)
+      
+      finalCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      finalWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      finalCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      finalWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      finalCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      finalWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      finalCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      finalWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      finalCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      finalWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      sumWeights <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
+      sumCounts <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
+      
+      if (length(tokenizeSentences[[1]]) == 0) {
+        shiny::showNotification(ui = "No post to analyze. Please fill Post Box above.", action = NULL, duration = 5, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
+      } else {
+        for (i in 1:length(tokenizeSentences[[1]])) {
+          tokenizeWords <- tokenizers::tokenize_words(x = tokenizeSentences[[1]][i], lowercase = TRUE, stopwords = NULL, simplify = FALSE)
+          
+          tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+          
+          if (length(tokenizeWords[[1]]) == 0) {
+            shiny::showNotification(ui = "No post to analyze. Please fill Post Box above.", action = NULL, duration = 5, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
+          } else {
+            for (j in 1:length(tokenizeWords[[1]])) { #looping of words
+              for (k in 1:nrow(contrastingConjunctions)) { #check if there are contrasting conjunctions.
+                if (tokenizeWords[[1]][j] == contrastingConjunctions[k, 1]) {
+                  tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                  tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                  tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                  tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                  tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                  tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                  tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                  tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                  tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                  tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                }
               }
-            }
-            
-            #----------START JOY-FUZZY-SETS----------
-            joy.FuzzyRules(joyData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
-            #----------END JOY-FUZZY-SETS----------
-            #----------START SADNESS-FUZZY-SETS----------
-            sadness.FuzzyRules(sadnessData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
-            #----------END SADNESS-FUZZY-SETS----------
-            #----------START ANGER-FUZZY-SETS----------
-            anger.FuzzyRules(angerData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
-            #----------END ANGER-FUZZY-SETS----------
-            #----------START DISGUST-FUZZY-SETS----------
-            disgust.FuzzyRules(disgustData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
-            #----------END DISGUST-FUZZY-SETS----------
-            #----------START FEAR-FUZZY-SETS----------
-            fear.FuzzyRules(fearData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
-            #----------END FEAR-FUZZY-SETS----------
-          }  
+              
+              #----------START JOY-FUZZY-SETS----------
+              joy.FuzzyRules(joyData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
+              #----------END JOY-FUZZY-SETS----------
+              #----------START SADNESS-FUZZY-SETS----------
+              sadness.FuzzyRules(sadnessData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
+              #----------END SADNESS-FUZZY-SETS----------
+              #----------START ANGER-FUZZY-SETS----------
+              anger.FuzzyRules(angerData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
+              #----------END ANGER-FUZZY-SETS----------
+              #----------START DISGUST-FUZZY-SETS----------
+              disgust.FuzzyRules(disgustData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
+              #----------END DISGUST-FUZZY-SETS----------
+              #----------START FEAR-FUZZY-SETS----------
+              fear.FuzzyRules(fearData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
+              #----------END FEAR-FUZZY-SETS----------
+            }  
+          }
+          
+          tally.emotions()
         }
-        
-        tally.emotions()
       }
+      
+      total.emotions()
     }
-    
-    total.emotions()
       
     #----------START JOY----------
     
