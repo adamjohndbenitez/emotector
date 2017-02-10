@@ -88,16 +88,25 @@ shiny::shinyServer(function(input, output, session) {
 
   shiny::observeEvent(input$submitManualPostId, {
     analyzePostAndItsComments <- c()
-    if ((!is.null(input$searchText) & (is.null(input$manualPostTextAreaId) | !is.null(input$manualPostTextAreaId)))) {
+    if ((input$searchText != "") & (input$manualPostTextAreaId == "" | input$manualPostTextAreaId != "")) {
       base::load(file = "fb_oauth")
       
       base::tryCatch(expr = {
         listOfPostsForAnalysis <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], feed = FALSE, reactions = TRUE, verbose = TRUE)
-          analyzePostAndItsComments <- append(x = analyzePostAndItsComments, values = stringi::stri_enc_toutf8(listOfPostsForAnalysis$message))
+        for (i in 1:length(listOfPostsForAnalysis$message)) {
+          if (validUTF8(listOfPostsForAnalysis$message[i])) {
+            analyzePostAndItsComments <- append(x = analyzePostAndItsComments, values = listOfPostsForAnalysis$message[i])
+          }
+        }
+
         for (y in 1:length(listOfPostsForAnalysis$message)) {
           listofCommentsForAnalysis <- Rfacebook::getPost(post = listOfPostsForAnalysis$id[y], token = fb_oauth, n = base::as.numeric(input$numberOfComments), comments = TRUE, likes = TRUE)
-          analyzePostAndItsComments <- append(x = analyzePostAndItsComments, values = stringi::stri_enc_toutf8(listofCommentsForAnalysis$comments$message))
+          for (z in 1:length(listofCommentsForAnalysis$comments$message)) {
+            analyzePostAndItsComments <- append(x = analyzePostAndItsComments, values = listofCommentsForAnalysis$comments$message[z])
+          }
         }
+        
+        print(analyzePostAndItsComments)
         
         shiny::showNotification(ui = "Finished Analyzing...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
       }, error = function(e) {
@@ -114,7 +123,6 @@ shiny::shinyServer(function(input, output, session) {
       
     } else {
       analyzePostAndItsComments <- input$manualPostTextAreaId
-      
       output$viewPostUIId <- shiny::renderUI({
         shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary",
           shiny::textOutput(outputId = "viewPostId")
@@ -134,17 +142,16 @@ shiny::shinyServer(function(input, output, session) {
     disgustData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Disgust", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
     fearData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Fear", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
     contrastingConjunctions <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Constrasting Conjunctions", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-    
+
     progress <- shiny::Progress$new(session, min = 1, max = length(analyzePostAndItsComments))
     on.exit(progress$close())
-    
+
     progress$set(message = "Calculation in progress", detail = "This may take a while...")
-    
-    for (w in 1:length(analyzePostAndItsComments)) {
-      progress$set(value = w)
-      Sys.sleep(0.25)
-      tokenizeSentences <- tokenizers::tokenize_sentences(x = analyzePostAndItsComments[w], lowercase = FALSE, strip_punctuation = FALSE, simplify = FALSE)
+
+    # for (w in 1:length(analyzePostAndItsComments)) {
       
+      # tokenizeSentences <- tokenizers::tokenize_sentences(x = stringi::stri_enc_toutf8(analyzePostAndItsComments[w]), lowercase = FALSE, strip_punctuation = FALSE, simplify = FALSE)
+
       finalCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
       finalWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
       finalCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
@@ -157,13 +164,17 @@ shiny::shinyServer(function(input, output, session) {
       finalWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
       sumWeights <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
       sumCounts <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
-      
-      if (length(tokenizeSentences[[1]]) == 0) {
+
+      # if (length(tokenizeSentences[[1]]) == 0) {
+      if (length(analyzePostAndItsComments) == 0) {
         shiny::showNotification(ui = "No post to analyze. Please fill Post Box above.", action = NULL, duration = 5, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
       } else {
-        for (i in 1:length(tokenizeSentences[[1]])) {
-          tokenizeWords <- tokenizers::tokenize_words(x = tokenizeSentences[[1]][i], lowercase = TRUE, stopwords = NULL, simplify = FALSE)
-          
+        # for (i in 1:length(tokenizeSentences[[1]])) {
+        for (i in 1:length(analyzePostAndItsComments)) {
+          progress$set(value = i)
+          Sys.sleep(0.25)
+          tokenizeWords <- tokenizers::tokenize_words(x = analyzePostAndItsComments[i], lowercase = TRUE, stopwords = NULL, simplify = FALSE)
+
           tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
           tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
           tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
@@ -174,26 +185,29 @@ shiny::shinyServer(function(input, output, session) {
           tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
           tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
           tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-          
+
           if (length(tokenizeWords[[1]]) == 0) {
             shiny::showNotification(ui = "No post to analyze. Please fill Post Box above.", action = NULL, duration = 5, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
           } else {
+            print(contrastingConjunctions)
             for (j in 1:length(tokenizeWords[[1]])) { #looping of words
-              for (k in 1:nrow(contrastingConjunctions)) { #check if there are contrasting conjunctions.
-                if (tokenizeWords[[1]][j] == contrastingConjunctions[k, 1]) {
-                  tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                  tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                  tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                  tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                  tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                  tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                  tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                  tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                  tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                  tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-                }
-              }
-              
+              # for (k in 1:nrow(contrastingConjunctions)) { #check if there are contrasting conjunctions.
+              #   
+              #   if (is.na(contrastingConjunctions[k, 1])) {
+              #   } else if (tokenizeWords[[1]][j] == contrastingConjunctions[k, 1]) {
+              #     tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #     tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #     tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #     tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #     tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #     tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #     tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #     tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #     tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #     tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              #   }
+              # }
+
               #----------START JOY-FUZZY-SETS----------
               joy.FuzzyRules(joyData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
               #----------END JOY-FUZZY-SETS----------
@@ -209,24 +223,24 @@ shiny::shinyServer(function(input, output, session) {
               #----------START FEAR-FUZZY-SETS----------
               fear.FuzzyRules(fearData, tokenizeWords[[1]][j], tokenizeWords[[1]][j+1])
               #----------END FEAR-FUZZY-SETS----------
-            }  
+            }
           }
-          
+
           tally.emotions()
         }
       }
-      
+
       total.emotions()
-    }
+    # }
       
     #----------START JOY----------
     
     output$joyBoxId <- shinydashboard::renderValueBox({
       shinydashboard::valueBox(value = shiny::tagList(
-          sumWeights[["Joy"]], 
+          sumWeights[["Joy"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
         ), subtitle = shiny::tagList(
-          sumCounts[["Joy"]], " - total word/s found" 
+          sumCounts[["Joy"]], " - total word/s found"
         ), icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1
       )
     })
@@ -267,19 +281,19 @@ shiny::shinyServer(function(input, output, session) {
       )
     })
     output$joyLowBoxId <- shinydashboard::renderInfoBox({
-      shinydashboard::infoBox(title = "Low Joy", 
+      shinydashboard::infoBox(title = "Low Joy",
         value = shiny::tagList(
           finalWeightJoy[["Low"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-        ), subtitle = shiny::tagList(finalCountJoy[["Low"]], " - word/s found"), 
+        ), subtitle = shiny::tagList(finalCountJoy[["Low"]], " - word/s found"),
         icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE)
     })
     output$joyLowestBoxId <- shinydashboard::renderInfoBox({
-      shinydashboard::infoBox(title = "Lowest Joy", 
+      shinydashboard::infoBox(title = "Lowest Joy",
         value = shiny::tagList(
           finalWeightJoy[["Lowest"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-        ), subtitle = shiny::tagList(finalCountJoy[["Lowest"]], " - word/s found"), 
+        ), subtitle = shiny::tagList(finalCountJoy[["Lowest"]], " - word/s found"),
         icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"), color = "yellow", width = 1, fill = TRUE)
     })
     
@@ -463,7 +477,7 @@ shiny::shinyServer(function(input, output, session) {
         ), subtitle = shiny::tagList(finalCountDisgust[["Neutral"]], " - word/s found"),
         icon = shiny::icon(name = "thumbs-o-down", class = "fa-1x", lib = "font-awesome"), color = "green", width = 1, fill = TRUE
       )
-    })  
+    })
     output$disgustLowBoxId <- shinydashboard::renderInfoBox({
       shinydashboard::infoBox(title = "Low disgust",
         value = shiny::tagList(
@@ -550,19 +564,19 @@ shiny::shinyServer(function(input, output, session) {
     #----------END FEAR----------
     
     output$plot <- renderPlot({
-      emotions.counts <- c(Joy = sumWeights[["Joy"]], 
-        Sadness = sumWeights[["Sadness"]], Anger = sumWeights[["Anger"]], 
+      emotions.counts <- c(Joy = sumWeights[["Joy"]],
+        Sadness = sumWeights[["Sadness"]], Anger = sumWeights[["Anger"]],
         Disgust = sumWeights[["Disgust"]], Fear = sumWeights[["Fear"]])
       graphics::barplot(height = emotions.counts, col = c("orange", "blue", "red", "green", "purple"), border = c("orange", "blue", "red", "green", "purple"))
     })
-  
+
     output$plot1 <- renderPlot({
       countsOfAll <- c(
-        finalCountJoy[["Lowest"]], finalCountSadness[["Lowest"]], finalCountAnger[["Lowest"]], finalCountDisgust[["Lowest"]], finalCountFear[["Lowest"]], 
-        finalCountJoy[["Low"]], finalCountSadness[["Low"]], finalCountAnger[["Low"]], finalCountDisgust[["Low"]], finalCountFear[["Low"]], 
-        finalCountJoy[["Neutral"]], finalCountSadness[["Neutral"]], finalCountAnger[["Neutral"]], finalCountDisgust[["Neutral"]], finalCountFear[["Neutral"]], 
-        finalCountJoy[["High"]], finalCountSadness[["High"]], finalCountAnger[["High"]], finalCountDisgust[["High"]], finalCountFear[["High"]], 
-        finalCountJoy[["Higher"]], finalCountSadness[["Higher"]], finalCountAnger[["Higher"]], finalCountDisgust[["Higher"]], finalCountFear[["Higher"]], 
+        finalCountJoy[["Lowest"]], finalCountSadness[["Lowest"]], finalCountAnger[["Lowest"]], finalCountDisgust[["Lowest"]], finalCountFear[["Lowest"]],
+        finalCountJoy[["Low"]], finalCountSadness[["Low"]], finalCountAnger[["Low"]], finalCountDisgust[["Low"]], finalCountFear[["Low"]],
+        finalCountJoy[["Neutral"]], finalCountSadness[["Neutral"]], finalCountAnger[["Neutral"]], finalCountDisgust[["Neutral"]], finalCountFear[["Neutral"]],
+        finalCountJoy[["High"]], finalCountSadness[["High"]], finalCountAnger[["High"]], finalCountDisgust[["High"]], finalCountFear[["High"]],
+        finalCountJoy[["Higher"]], finalCountSadness[["Higher"]], finalCountAnger[["Higher"]], finalCountDisgust[["Higher"]], finalCountFear[["Higher"]],
         finalCountJoy[["Highest"]], finalCountSadness[["Highest"]], finalCountAnger[["Highest"]], finalCountDisgust[["Highest"]], finalCountFear[["Highest"]]
         )
       # countsOfAll <- c(1:30)
@@ -570,7 +584,7 @@ shiny::shinyServer(function(input, output, session) {
       rownames(countsMatrix) <- c("Lowest", "Low", "Neutral", "High", "Higher", "Highest")
       colnames(countsMatrix) <- c("Joy", "Sadness", "Anger", "Digust", "Fear")
       tableDataEmotions <- as.table(countsMatrix)
-      graphics::barplot(height = tableDataEmotions, width = 2, main = "Emotions vs Degrees", 
+      graphics::barplot(height = tableDataEmotions, width = 2, main = "Emotions vs Degrees",
         xlab = "Emotions", ylab = "Degrees", col = grey.colors(length(rownames(tableDataEmotions))), legend.text = rownames(tableDataEmotions))
     })
     
