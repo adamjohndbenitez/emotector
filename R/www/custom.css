@@ -8,3 +8,11 @@
   margin-left: 10px;
   margin-top: 10px;
 }
+
+.submitPostBtn {
+  text-align: center;
+}
+
+.manualInputArea {
+  background: grey;
+}
