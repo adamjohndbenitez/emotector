@@ -101,14 +101,25 @@ shinydashboard::dashboardPage(skin = "blue",
       )
     )
     ),
-    shiny::fluidRow(
-      shinydashboard::box(title = "Summary of Weighted Emotions", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
-        shiny::plotOutput("plot")
-      )
-    ),
-    shiny::fluidRow(
-      shinydashboard::box(title = "Degree of Emotions (Count-based Stacked Barplot)", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
-        shiny::plotOutput("plot1")
+    
+    shiny::fixedRow(
+      column(12, "",
+         fixedRow(
+           column(6, " ",
+              shiny::fluidRow(
+                shinydashboard::box(title = "Summary of Weighted Emotions", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
+                                    shiny::plotOutput("plot")
+                )
+              )
+           ),
+           column(6, " ",
+              shiny::fluidRow(
+                shinydashboard::box(title = "Degree of Emotions (Count-based Stacked Barplot)", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
+                                    shiny::plotOutput("plot1")
+                )
+              )
+           )
+         )
       )
     )
   ),

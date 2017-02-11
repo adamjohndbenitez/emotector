@@ -24,10 +24,11 @@ shiny::shinyServer(function(input, output, session) {
     base::tryCatch(expr = {
       listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], feed = FALSE, reactions = TRUE, verbose = TRUE)
       
+      
       progress <- shiny::Progress$new(session, min=1, max=15)
       on.exit(progress$close())
       
-      progress$set(message = "Calculation in progress", detail = "This may take a while...")
+      progress$set(message = "Getting Facebook Post", detail = "This may take a while...")
       
       for (i in 1:15) {
         progress$set(value = i)
