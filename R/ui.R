@@ -15,8 +15,8 @@ shinydashboard::dashboardPage(skin = "blue",
       shinydashboard::menuItem("Search Page ID Settings:", icon = 
         shiny::icon(name = "cogs", class = "fa-1x", lib = "font-awesome"),
         shiny::dateRangeInput(inputId = "dateRangeId", label = "Date Range of Posts"),
-        shiny::numericInput(inputId = "numberOfPosts", label = "Number of Posts", value = 10),
-        shiny::numericInput(inputId = "numberOfComments", label = "Number of Comments", value = 10)
+        shiny::numericInput(inputId = "numberOfPosts", label = "Number of Posts", value = 5),
+        shiny::numericInput(inputId = "numberOfComments", label = "Number of Comments", value = 5)
       )
     ),
     shiny::tags$br(),
