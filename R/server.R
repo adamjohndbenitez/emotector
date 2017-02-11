@@ -8,7 +8,7 @@ source("fearFuzzyRules.R")
 source("Calculations.R")
 
 shiny::shinyServer(function(input, output, session) {
-  shiny::updateDateRangeInput(session = session, inputId = "dateRangeId", start = base::Sys.Date() - 10, end = base::Sys.Date())
+  shiny::updateDateRangeInput(session = session, inputId = "dateRangeId", start = base::Sys.Date() - 7, end = base::Sys.Date())
   
   joyData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Joy", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
   sadnessData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Sadness", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
@@ -48,12 +48,14 @@ shiny::shinyServer(function(input, output, session) {
         c("#", input$postListId, ":", listOfPosts$message[as.numeric(input$postListId)])
       })
       
+      output$downloadCSV <- shiny::renderUI({
+        shiny::downloadLink(outputId = "downloadCsvFileId", label = shiny::tagList(
+          shiny::icon(name = "download", class = "fa-1x", lib = "font-awesome"), "Download Posts")
+        )
+      })
       
       output$viewPostUIId <- shiny::renderUI({
-        shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary", background = NULL, footer = 
-          shiny::downloadLink(outputId = "downloadCsvFileId", label = shiny::tagList(
-            shiny::icon(name = "download", class = "fa-1x", lib = "font-awesome"), "Download Posts")
-          ),
+        shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary", background = NULL,
           shiny::textOutput(outputId = "viewPostId")
         )
       })
