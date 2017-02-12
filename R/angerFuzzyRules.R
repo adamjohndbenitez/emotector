@@ -1,24 +1,20 @@
 anger.FuzzyRules <- function(angerData, tokenizeWords1, tokenizeWords2, env = parent.frame()) {
   for (l in 1:nrow(angerData)) {
-    if (is.na(angerData[l, 1])) { #trapping for NA values in excel
-    } else if (tokenizeWords1 == angerData[l, 1]) { #look for negative contractions and connotations.
+    if (identical(tokenizeWords1, angerData[l, 1])) { #look for negative contractions and connotations.
       for (n in 1:nrow(angerData)) {
-        if (is.na(angerData[n, 3])) {
-        } else if (tokenizeWords2 == angerData[n, 3]) {
+        if (identical(tokenizeWords2, angerData[n, 3])) {
           env$tempCountAnger[["Lowest"]] <- env$tempCountAnger[["Lowest"]] + 1
           env$tempCountAnger[["Neutral"]] <- env$tempCountAnger[["Neutral"]] - 1
           break()
         } # look up words in neutral column then add intensifier
 
-        if (is.na(angerData[n, 4])) {
-        } else if (tokenizeWords2 == angerData[n, 4]) {
+        if (identical(tokenizeWords2, angerData[n, 4])) {
           env$tempCountAnger[["Lowest"]] <- env$tempCountAnger[["Lowest"]] + 1
           env$tempCountAnger[["High"]] <- env$tempCountAnger[["High"]] - 1
           break()
         }
 
-        if (is.na(angerData[n, 5])) {
-        } else if (tokenizeWords2 == angerData[n, 5]) {
+        if (identical(tokenizeWords2, angerData[n, 5])) {
           env$tempCountAnger[["Lowest"]] <- env$tempCountAnger[["Lowest"]] + 1
           env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] - 1
           break()
@@ -27,25 +23,21 @@ anger.FuzzyRules <- function(angerData, tokenizeWords1, tokenizeWords2, env = pa
       break()
     }
     
-    if (is.na(angerData[l, 2])) { #trapping for NA values in excel
-    } else if (tokenizeWords1 == angerData[l, 2]) { #look for medium words.
+    if (identical(tokenizeWords1, angerData[l, 2])) { #look for medium words.
       for (m in 1:nrow(angerData)) {
-        if (is.na(angerData[m, 3])) {
-        } else if (tokenizeWords2 == angerData[m, 3]) {
+        if (identical(tokenizeWords2, angerData[m, 3])) {
           env$tempCountAnger[["Low"]] <- env$tempCountAnger[["Low"]] + 1
           env$tempCountAnger[["Neutral"]] <- env$tempCountAnger[["Neutral"]] - 1
           break()
         } # look up words in neutral column then add intensifier
 
-        if (is.na(angerData[m, 4])) {
-        } else if (tokenizeWords2 == angerData[m, 4]) {
+        if (identical(tokenizeWords2, angerData[m, 4])) {
           env$tempCountAnger[["Low"]] <- env$tempCountAnger[["Low"]] + 1
           env$tempCountAnger[["High"]] <- env$tempCountAnger[["High"]] - 1
           break()
         }
 
-        if (is.na(angerData[m, 5])) {
-        } else if (tokenizeWords2 == angerData[m, 5]) {
+        if (identical(tokenizeWords2, angerData[m, 5])) {
           env$tempCountAnger[["Low"]] <- env$tempCountAnger[["Low"]] + 1
           env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] - 1
           break()
@@ -54,25 +46,21 @@ anger.FuzzyRules <- function(angerData, tokenizeWords1, tokenizeWords2, env = pa
       break()
     }
     
-    if (is.na(angerData[l, 6])) { #trapping for NA values in excel
-    } else if (tokenizeWords1 == angerData[l, 6]) { #look for intensifier
+    if (identical(tokenizeWords1, angerData[l, 6])) { #look for intensifier
       for (o in 1:nrow(angerData)) {
-        if (is.na(angerData[o, 3])) {
-        } else if (tokenizeWords2 == angerData[o, 3]) {
+        if (identical(tokenizeWords2, angerData[o, 3])) {
           env$tempCountAnger[["Highest"]] <- env$tempCountAnger[["Highest"]] + 1
           env$tempCountAnger[["Neutral"]] <- env$tempCountAnger[["Neutral"]] - 1
           break()
         } # look up words in neutral column then add intensifier
 
-        if (is.na(angerData[o, 4])) {
-        } else if (tokenizeWords2 == angerData[o, 4]) {
+        if (identical(tokenizeWords2, angerData[o, 4])) {
           env$tempCountAnger[["Highest"]] <- env$tempCountAnger[["Highest"]] + 1
           env$tempCountAnger[["High"]] <- env$tempCountAnger[["High"]] - 1
           break()
         }
 
-        if (is.na(angerData[o, 5])) {
-        } else if (tokenizeWords2 == angerData[o, 5]) {
+        if (identical(tokenizeWords2, angerData[o, 5])) {
           env$tempCountAnger[["Highest"]] <- env$tempCountAnger[["Highest"]] + 1
           env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] - 1
           break()
@@ -81,20 +69,17 @@ anger.FuzzyRules <- function(angerData, tokenizeWords1, tokenizeWords2, env = pa
       break()
     }
     
-    if (is.na(angerData[l, 3])) {
-    } else if (tokenizeWords1 == angerData[l, 3]) {
+    if (identical(tokenizeWords1, angerData[l, 3])) {
       env$tempCountAnger[["Neutral"]] <- env$tempCountAnger[["Neutral"]] + 1
       break()
     }
     
-    if (is.na(angerData[l, 4])) {
-    } else if (tokenizeWords1 == angerData[l, 4]) {
+    if (identical(tokenizeWords1, angerData[l, 4])) {
       env$tempCountAnger[["High"]] <- env$tempCountAnger[["High"]] + 1
       break()
     }
     
-    if (is.na(angerData[l, 5])) {
-    } else if (tokenizeWords1 == angerData[l, 5]) {
+    if (identical(tokenizeWords1, angerData[l, 5])) {
       env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] + 1
       break()
     }
