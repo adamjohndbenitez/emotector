@@ -43,7 +43,16 @@ shinydashboard::dashboardPage(skin = "blue",
       shiny::uiOutput(outputId = "viewCommentsUIId")
     ),
     shiny::fluidRow(
-    shinydashboard::tabBox(id = "tabBoxId", selected = "Joy", title = "Emotions", width = 12, height = NULL, side = "left",
+    shinydashboard::tabBox(id = "tabBoxId", selected = "All", title = "Emotions", width = 12, height = NULL, side = "left",
+      shiny::tabPanel(title = "All Emotions", value = "All", icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"),
+        shiny::fluidRow(
+          shinydashboard::valueBoxOutput(outputId = "allJoyBoxId", width = 3),
+          shinydashboard::valueBoxOutput(outputId = "allSadnessBoxId", width = 3),
+          shinydashboard::valueBoxOutput(outputId = "allAngerBoxId", width = 3),
+          shinydashboard::valueBoxOutput(outputId = "allDisgustBoxId", width = 3),
+          shinydashboard::valueBoxOutput(outputId = "allfearBoxId", width = 3)
+        )
+      ),
       shiny::tabPanel(title = "Joy", value = "Joy", icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"),
         shiny::fluidRow(
           shinydashboard::valueBoxOutput(outputId = "joyBoxId", width = 3),
@@ -101,25 +110,24 @@ shinydashboard::dashboardPage(skin = "blue",
       )
     )
     ),
-    
     shiny::fixedRow(
-      column(12, "",
-         fixedRow(
-           column(6, " ",
-              shiny::fluidRow(
-                shinydashboard::box(title = "Summary of Weighted Emotions", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
-                                    shiny::plotOutput("plot")
-                )
+      column(width = 12, 
+        fixedRow(
+          column(width = 6,
+            shiny::fluidRow(
+              shinydashboard::box(title = "Summary of Weighted Emotions", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
+                shiny::plotOutput("plot")
               )
-           ),
-           column(6, " ",
-              shiny::fluidRow(
-                shinydashboard::box(title = "Degree of Emotions (Count-based Stacked Barplot)", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
-                                    shiny::plotOutput("plot1")
-                )
+            )
+          ),
+          column(width = 6,
+            shiny::fluidRow(
+              shinydashboard::box(title = "Degree of Emotions (Count-based Stacked Barplot)", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
+                shiny::plotOutput("plot1")
               )
-           )
-         )
+            )
+          )
+        )
       )
     )
   ),
