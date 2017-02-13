@@ -25,11 +25,11 @@ shinydashboard::dashboardPage(skin = "blue",
       shiny::uiOutput(outputId = "downloadCSV")
     ),
     shiny::tags$hr(),
-    shiny::checkboxInput(inputId = "checkManualPostId", label = "Manual input post: ", value = FALSE, width = "100%"),
+    shiny::checkboxInput(inputId = "checkManualPostId", label = "Analyze / Override Posts: ", value = FALSE, width = "100%"),
     shiny::conditionalPanel(condition = "input.checkManualPostId == true", 
-      shiny::textAreaInput(inputId = "manualPostTextAreaId", label = NULL, value = "", width = "100%", height = "200px", placeholder = "Input post..."),
+      shiny::textAreaInput(inputId = "manualPostTextAreaId", label = NULL, value = "", width = "100%", height = "200px", placeholder = "You can override post from facebook API, by removing page id and input here."),
       shiny::div(class= "submitPostBtn", " ",
-         shiny::actionButton(inputId = "submitManualPostId", label = "Submit Post", icon = 
+         shiny::actionButton(inputId = "submitManualPostId", label = "Analyze Post", icon = 
             shiny::icon(name = "hdd-o", class = "fa-1x", lib = "font-awesome"), width = "70%"
          )  
       )
