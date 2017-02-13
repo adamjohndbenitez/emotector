@@ -50,7 +50,7 @@ shinydashboard::dashboardPage(skin = "blue",
           shinydashboard::valueBoxOutput(outputId = "allSadnessBoxId", width = 3),
           shinydashboard::valueBoxOutput(outputId = "allAngerBoxId", width = 3),
           shinydashboard::valueBoxOutput(outputId = "allDisgustBoxId", width = 3),
-          shinydashboard::valueBoxOutput(outputId = "allfearBoxId", width = 3)
+          shinydashboard::valueBoxOutput(outputId = "allFearBoxId", width = 3)
         )
       ),
       shiny::tabPanel(title = "Joy", value = "Joy", icon = shiny::icon(name = "smile-o", class = "fa-1x", lib = "font-awesome"),
