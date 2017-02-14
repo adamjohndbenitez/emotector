@@ -5,6 +5,7 @@ source("sadnessFuzzyRules.R")
 source("angerFuzzyRules.R")
 source("disgustFuzzyRules.R")
 source("fearFuzzyRules.R")
+source("emojisFuzzyRules.R")
 source("Calculations.R")
 
 shiny::shinyServer(function(input, output, session) {
@@ -80,7 +81,23 @@ shiny::shinyServer(function(input, output, session) {
     #   invalidateLater(1000, session)
     # })
     
+    finalCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    sumWeights <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
+    sumCounts <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
+    
     analyzePostAndItsComments <- c()
+    emojisHahaCounts <- c()
+    emojisSadCounts <- c()
+    emojisAngryCounts <- c()
     if ((input$searchText != "") & (input$manualPostTextAreaId == "" | input$manualPostTextAreaId != "")) {
       base::load(file = "fb_oauth")
       
@@ -99,7 +116,13 @@ shiny::shinyServer(function(input, output, session) {
           }
         }
         
-        shiny::showNotification(ui = "Finished Analyzing...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
+        for (h in 1:length(listOfPostsForAnalysis$message)) {
+          emojisHahaCounts <- append(x = emojisHahaCounts, values = listOfPostsForAnalysis$haha_count[h])
+          emojisSadCounts <- append(x = emojisSadCounts, values = listOfPostsForAnalysis$sad_count[h])
+          emojisAngryCounts <- append(x = emojisAngryCounts, values = listOfPostsForAnalysis$angry_count[h])
+        }
+        
+        shiny::showNotification(ui = "Analyzing...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
       }, error = function(e) {
        shiny::showNotification(ui = "The Facebook page or group ID you’re using is not correct or invalid. Click link below", action =
         shiny::tagList(
@@ -125,6 +148,8 @@ shiny::shinyServer(function(input, output, session) {
       })
     }
     
+    emojis.FuzzyRules(emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
+    
     # -----------------START-EMOTIONAL-ANALYSIS------------------
     
     joyData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Joy", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
@@ -134,19 +159,6 @@ shiny::shinyServer(function(input, output, session) {
     fearData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Fear", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
     contrastingConjunctions <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Constrasting Conjunctions", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
     
-    finalCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    finalWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-    sumWeights <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
-    sumCounts <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
-
     progress <- shiny::Progress$new()
     on.exit(expr = progress$close())
     progress$set(message = "Post and Comments: ", value = 0)
@@ -211,6 +223,7 @@ shiny::shinyServer(function(input, output, session) {
       }
       total.emotions()
     }
+    shiny::showNotification(ui = "Done...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
     
     # -----------------END-EMOTIONAL-ANALYSIS------------------
     
