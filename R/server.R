@@ -93,8 +93,14 @@ shiny::shinyServer(function(input, output, session) {
     finalWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
     sumWeights <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
     sumCounts <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
+    finalEmojis <- list(Love = 0, Haha = 0, Sad = 0, Angry = 0)
+    finalWeightLove <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalWeightHaha <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalWeightSad <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalWeightAngry <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
     
     analyzePostAndItsComments <- c()
+    emojisLoveCounts <- c()
     emojisHahaCounts <- c()
     emojisSadCounts <- c()
     emojisAngryCounts <- c()
@@ -117,6 +123,7 @@ shiny::shinyServer(function(input, output, session) {
         }
         
         for (h in 1:length(listOfPostsForAnalysis$message)) {
+          emojisLoveCounts <- append(x = emojisLoveCounts, values = listOfPostsForAnalysis$love_count[h])
           emojisHahaCounts <- append(x = emojisHahaCounts, values = listOfPostsForAnalysis$haha_count[h])
           emojisSadCounts <- append(x = emojisSadCounts, values = listOfPostsForAnalysis$sad_count[h])
           emojisAngryCounts <- append(x = emojisAngryCounts, values = listOfPostsForAnalysis$angry_count[h])
@@ -148,7 +155,7 @@ shiny::shinyServer(function(input, output, session) {
       })
     }
     
-    emojis.FuzzyRules(emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
+    emojis.FuzzyRules(emojisLoveCounts, emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
     
     # -----------------START-EMOTIONAL-ANALYSIS------------------
     
@@ -227,6 +234,8 @@ shiny::shinyServer(function(input, output, session) {
     
     # -----------------END-EMOTIONAL-ANALYSIS------------------
     
+    # -----------------START-ALL-EMOTIONS------------------
+    
     output$allJoyBoxId <- shinydashboard::renderValueBox({
       # Re-execute this reactive expression after 2000 milliseconds
       invalidateLater(1000)
@@ -274,6 +283,49 @@ shiny::shinyServer(function(input, output, session) {
         ), icon = shiny::icon(name = "heartbeat", class = "fa-1x", lib = "font-awesome"), color = "purple", width = 1
       )
     })
+    
+    # -----------------END-ALL-EMOTIONS------------------
+    
+    # -----------------START-EMOJIS------------------
+    
+    output$loveBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          finalEmojis[["Love"]],
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          "Love Weights"
+        ), icon = shiny::icon(name = "gratipay", class = "fa-1x", lib = "font-awesome"), color = "fuchsia", width = 1
+      )
+    })
+    output$hahaBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          finalEmojis[["Haha"]],
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          "Haha Weights"
+        ), icon = shiny::icon(name = "sign-language", class = "fa-1x", lib = "font-awesome"), color = "teal", width = 1
+      )
+    })
+    output$sadBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          finalEmojis[["Sad"]],
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          "Sad Weights"
+        ), icon = shiny::icon(name = "meh-o", class = "fa-1x", lib = "font-awesome"), color = "maroon", width = 1
+      )
+    })
+    output$angryBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          finalEmojis[["Angry"]],
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          "Angry Weights"
+        ), icon = shiny::icon(name = "eye", class = "fa-1x", lib = "font-awesome"), color = "navy", width = 1
+      )
+    })
+    
+    # -----------------END-EMOJIS------------------
       
     #----------START JOY----------
     
