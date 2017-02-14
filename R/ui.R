@@ -14,9 +14,24 @@ shinydashboard::dashboardPage(skin = "blue",
     shinydashboard::sidebarMenu(
       shinydashboard::menuItem("Search Page ID Settings:", icon = 
         shiny::icon(name = "cogs", class = "fa-1x", lib = "font-awesome"),
-        shiny::dateRangeInput(inputId = "dateRangeId", label = "Date Range of Posts"),
-        shiny::numericInput(inputId = "numberOfPosts", label = "Number of Posts", value = 5),
-        shiny::numericInput(inputId = "numberOfComments", label = "Number of Comments", value = 5)
+        shiny::dateRangeInput(inputId = "dateRangeId", label = 
+          shiny::tagList(
+            shiny::icon(name = "calendar", class = "fa-1x", lib = "font-awesome"),
+            "Date Range of Posts"
+          )
+        ),
+        shiny::numericInput(inputId = "numberOfPosts", label = 
+          shiny::tagList(
+            shiny::icon(name = "comment", class = "fa-1x", lib = "font-awesome"),
+            "Numbe of Posts"
+          ), value = 5
+        ),
+        shiny::numericInput(inputId = "numberOfComments", label = 
+          shiny::tagList(
+            shiny::icon(name = "comments", class = "fa-1x", lib = "font-awesome"),
+            "Number of comments"
+          ), value = 5
+        )
       )
     ),
     shiny::tags$br(),
@@ -106,6 +121,14 @@ shinydashboard::dashboardPage(skin = "blue",
           shinydashboard::infoBoxOutput(outputId = "fearNeutralBoxId", width = 3),
           shinydashboard::infoBoxOutput(outputId = "fearLowBoxId", width = 3),
           shinydashboard::infoBoxOutput(outputId = "fearLowestBoxId", width = 3)
+        )
+      ),
+      shiny::tabPanel(title = "Emojis", value = "Emojis", icon = shiny::icon(name = "facebook-square", class = "fa-1x", lib = "font-awesome"),
+        shiny::fluidRow(
+          shinydashboard::valueBoxOutput(outputId = "loveBoxId", width = 3),
+          shinydashboard::infoBoxOutput(outputId = "hahaBoxId", width = 3),
+          shinydashboard::infoBoxOutput(outputId = "sadBoxId", width = 3),
+          shinydashboard::infoBoxOutput(outputId = "angryBoxId", width = 3)
         )
       )
     )
