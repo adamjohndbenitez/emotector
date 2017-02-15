@@ -37,3 +37,73 @@
 
 
 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0080> - smile
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0083> - big smile
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0084> - smile 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0081> - 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0086>
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0085>
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0082>
+<ed><U+00A0><U+00BE><ed><U+00B4><U+00A3>
+<U+263A><U+FE0F>
+<ed><U+00A0><U+00BD><ed><U+00B8><U+008A>
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0087>
+<ed><U+00A0><U+00BD><ed><U+00B9><U+0082>
+<ed><U+00A0><U+00BD><ed><U+00B9><U+0083>
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0089>
+<ed><U+00A0><U+00BD><ed><U+00B8><U+008C>
+<ed><U+00A0><U+00BD><ed><U+00B8><U+008D>
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0098>
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0097> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0099> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+009A> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+008B> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+009C> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+009D> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+009B> 
+<ed><U+00A0><U+00BE><ed><U+00B4><U+0091> 
+<ed><U+00A0><U+00BE><ed><U+00B4><U+0097>
+<ed><U+00A0><U+00BE><ed><U+00B4><U+0093> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+008E>
+<ed><U+00A0><U+00BE><ed><U+00B4><U+00A1> 
+<ed><U+00A0><U+00BE><ed><U+00B4><U+00A0>
+
+<ed><U+00A0><U+00BD><ed><U+00B8><U+0082> 
+<ed><U+00A0><U+00BD><ed><U+00B2><U+00A9> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+00A4> 
+<ed><U+00A0><U+00BD><ed><U+00B2><U+0085> 
+<ed><U+00A0><U+00BD><ed><U+00B1><U+008C> 
+<ed><U+00A0><U+00BD><ed><U+00B1><U+0085> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+00BB> 
+<ed><U+00A0><U+00BD><ed><U+00B2><U+0082> 
+<ed><U+00A0><U+00BD><ed><U+00B3><U+00BB> 
+<ed><U+00A0><U+00BC><ed><U+00BF><U+00B0> 
+<ed><U+00A0><U+00BD><ed><U+00BA><U+0097> 
+<ed><U+00A0><U+00BD><ed><U+00B3><U+00B1> 
+<ed><U+00A0><U+00BD><ed><U+00B8><U+00B1> 
+<ed><U+00A0><U+00BD><ed><U+00B1><U+00AF> 
+<ed><U+00A0><U+00BD><ed><U+00B1><U+00AB> 
+<ed><U+00A0><U+00BC><ed><U+00BC><U+0099>
+
+<ed><U+00A0><U+00BE><ed><U+00B6><U+0083> Turkey 
+<ed><U+00A0><U+00BD><ed><U+00B4><U+00A5> Fire 
+<ed><U+00A0><U+00BC><ed><U+00BD><U+00BD> Plate
+
+<ed><U+00A0><U+00BD><ed><U+00B6><U+00A4>
+<ed><U+00A0><U+00BD><ed><U+00B6><U+00A4>
+<ed><U+00A0><U+00BD><ed><U+00B6><U+00A4>
+<ed><U+00A0><U+00BD><ed><U+00B6><U+00A4> 
+
+<ed><U+00A0><U+00BC><ed><U+00BE><U+00B6>
+<ed><U+00A0><U+00BC><ed><U+00BE><U+00B5>
+<ed><U+00A0><U+00BC><ed><U+00BE><U+00A4>
+<ed><U+00A0><U+00BC><ed><U+00BE><U+00B8>
+
+<ed><U+00A0><U+00BE><ed><U+00B4><U+00B7>
+<ed><U+00A0><U+00BE><ed><U+00B4><U+00B7>
+<ed><U+00A0><U+00BE><ed><U+00B4><U+00B7>
+
+<ed><U+00A0><U+00BD><ed><U+00B8><U+00AE> 
+<ed><U+00A0><U+00BE><ed><U+00B6><U+008D> 
+<ed><U+00A0><U+00BE><ed><U+00B4><U+00A2> 
+<ed><U+00A0><U+00BC><ed><U+00BD><U+0091>
