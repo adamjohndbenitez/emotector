@@ -18,6 +18,15 @@ shiny::shinyServer(function(input, output, session) {
     base::tryCatch(expr = {
       listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], feed = FALSE, reactions = TRUE, verbose = TRUE)
       
+      # Experimetal code. regex for unicode
+      cat(listOfPosts$message)
+      for (i in 1:length(listOfPosts$message)) {
+        m <- cat(listOfPosts$message)
+        n <- regexpr(pattern = "<U\\+[a-zA-Z0-9]*><U\\+[a-zA-Z0-9]*>", m, perl=TRUE)
+        o <- regmatches(cat(listOfPosts$message), n)
+        print(o)
+      }
+      
       output$postListUIId <- shiny::renderUI({
         shiny::selectInput(inputId = "postListId", label = "Select Post #", choices = 1:base::length(listOfPosts$message))
       })
@@ -109,9 +118,21 @@ shiny::shinyServer(function(input, output, session) {
       
       base::tryCatch(expr = {
         listOfPostsForAnalysis <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], feed = FALSE, reactions = TRUE, verbose = TRUE)
+        
+        # m <- regexpr(pattern = "<U\\+[a-zA-Z0-9]*><U\\+[a-zA-Z0-9]*>", listOfPostsForAnalysis$message, perl=TRUE)
+        # n <- regmatches(listOfPostsForAnalysis$message, m)
+        # print(n)
+        print(listOfPostsForAnalysis)
+        print(listOfPostsForAnalysis$message)
+        listOfMessage <- as.listOfPostsForAnalysis$message
+        print(listOfMessage)
+        print(typeof(listOfPostsForAnalysis$message))
+        
         for (i in 1:length(listOfPostsForAnalysis$message)) {
           if (validUTF8(listOfPostsForAnalysis$message[i])) {
             analyzePostAndItsComments <- append(x = analyzePostAndItsComments, values = listOfPostsForAnalysis$message[i])
+            # emoticonsOfPostsForAnalysis <- tokenizers::tokenize_regex(x = listOfPostsForAnalysis$message[i], pattern = "<U\\+[a-zA-Z0-9]*>", simplify = TRUE)
+            # print(emoticonsOfPostsForAnalysis)
           }
         }
 
@@ -172,7 +193,7 @@ shiny::shinyServer(function(input, output, session) {
     totalPostAndComments <- length(analyzePostAndItsComments)
     
     for (i in 1:length(analyzePostAndItsComments)) {
-      tokenizeLines <- tokenizers::tokenize_lines(x = analyzePostAndItsComments[i], simplify = TRUE)
+        tokenizeLines <- tokenizers::tokenize_lines(x = analyzePostAndItsComments[i], simplify = TRUE)
 
       tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
       tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)

@@ -19,9 +19,13 @@
 
 <ed><U+00A0><U+00BD><ed><U+00B8><U+0082> - laughing face with crying eyes
 
+<ed><U+00A0><U+00BD><ed><U+00B2><U+009D> - heart wrap with gift wrapper.
+
 <U+2764> - Heart 
 
 <U+20B1> - Peso sign
+
+<U+2764><U+FE0F>
 
 <ed><U+00A0><U+00BD><ed><U+00B2><U+0095> - Double heart
 
@@ -34,6 +38,8 @@
 <U+2600><U+FE0F> - sun
 
 <ed><U+00A0><U+00BD><ed><U+00B8><U+0084> - smiling with wide open smile
+
+<U+00A0><U+00BD><ed><U+00B8><U+00BB> - cat with hearty eyes
 
 
 
