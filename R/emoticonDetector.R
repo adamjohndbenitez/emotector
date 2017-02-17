@@ -13,7 +13,7 @@ emoticonDetector <- function() {
       # values2 <- strsplit(x = values1, split = "><")
       # values3 <- substr(values2, 2, nchar(values2)-1)
       print(values1)
-      typeof(values1) 
+      print(typeof(values1))
       for (i in values1) {
         values2 <- strsplit(x = i, split = "><")
         values3 <- strsplit(x = i, split = "><")
@@ -38,3 +38,16 @@ emoticonDetector <- function() {
   # print(values2[1])
 }
 emoticonDetector()
+
+
+emoticonDetector2 <- function() {
+  exp1 <- "My future home looks exactly as I dreamt it! What about yours?\xed��\xed�\u009f\xed��\xed�\u009f\nCheck this out \u2b07\nhttps://sillyswing.com/"
+  exp2 <- "As soon as you'll learn these you'll be a better person ;) \u2b07 UpVee\xed��\xed�� https://bit.ly/2lbLyrf"
+  exp3 <- "Make now you before & after photos! \xed��\xed�\u008d \xed��\xed�\u008d \xed��\xed�\u008d\nCheck this out \u2b07\nhttps://sillyswing.com/beforeandafter"
+  # m <- regexpr(pattern = "(u00[a-zA-Z0-9]*)", text = exp1)
+  # n <- regmatches(x = exp1, m = m)
+  # n <- as.character(exp1)
+  n <- as.
+  print(n)
+}
+emoticonDetector2()

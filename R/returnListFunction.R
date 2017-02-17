@@ -37,7 +37,7 @@
 # # start
 # # (1) Pass caller's environment. You can explicitly pass the parent environment and index into it. Try this:
 # 
-# f2a <- function(P, env = parent.frame()) {
+# f2a <- function(P,   env = parent.frame()) {
 #     env$calls <- env$calls + 1
 #     print(env$calls)
 #     return(P + env$c + env$d)
@@ -89,3 +89,17 @@
 # }
 # f1b()
 # # end
+
+
+inputString <- c("My future home looks exactly as I dreamt it! 
+  What about yours?\xed��\xed�\u009f\xed��\xed�\u009f\nCheck this out \u
+  2b07\nhttps://sillyswing.com/home", "As soon as you'll learn these you'll be a better person ;)
+  \u2b07 UpVee\xed��\xed�� h
+  ttps://bit.ly/2lbLyrf", "Make now you before & after photos! 
+  \xed��\xed�\u008d \xed��\xed�\u008d \xed
+  ��\xed�\u008d\nCheck this out \u
+  2b07\nhttps://sillyswing.com/beforeandafter", "LOL I'm a Scorpio and this is spot on for me 
+  \xed��\xed�\u0082 \n♈ ♉ ♊ ♋ ♌ ♍ \n♎ ♏ ♐ ♑ ♒ ♓\nMore here
+  ➡ https://bit.ly/2hgqDBS \xed��\xed�\u0089")
+
+o <- regmatches("", inputString)

@@ -28,7 +28,7 @@ shiny::shinyServer(function(input, output, session) {
       }
       
       output$postListUIId <- shiny::renderUI({
-        shiny::selectInput(inputId = "postListId", label = "Select Post #", choices = 1:base::length(listOfPosts$message))
+        shiny::selectInput(inputId = "postListId", label = "Select Post #", choices = base::length(listOfPosts$message):1) # sorted from latest to oldest
       })
       
       output$viewPostId <- shiny::renderText({
@@ -118,15 +118,6 @@ shiny::shinyServer(function(input, output, session) {
       
       base::tryCatch(expr = {
         listOfPostsForAnalysis <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], feed = FALSE, reactions = TRUE, verbose = TRUE)
-        
-        # m <- regexpr(pattern = "<U\\+[a-zA-Z0-9]*><U\\+[a-zA-Z0-9]*>", listOfPostsForAnalysis$message, perl=TRUE)
-        # n <- regmatches(listOfPostsForAnalysis$message, m)
-        # print(n)
-        print(listOfPostsForAnalysis)
-        print(listOfPostsForAnalysis$message)
-        listOfMessage <- as.listOfPostsForAnalysis$message
-        print(listOfMessage)
-        print(typeof(listOfPostsForAnalysis$message))
         
         for (i in 1:length(listOfPostsForAnalysis$message)) {
           if (validUTF8(listOfPostsForAnalysis$message[i])) {
