@@ -1,5 +1,5 @@
 emojis.FuzzyRules <- function(loveWeightData, hahaWeightData, sadWeightData, angryWeightData, env = parent.frame()) {
-  if (length(loveWeightData) != 0) {
+  if (!identical(length(loveWeightData), 0)) {
     for (r in 1:length(loveWeightData)) {
       if ((loveWeightData[r] >= 0 | is.null(loveWeightData[r])) & loveWeightData[r] <= 20) {
         env$finalWeightLove[["Lowest"]] <- env$finalWeightLove[["Lowest"]] + 0
@@ -24,7 +24,7 @@ emojis.FuzzyRules <- function(loveWeightData, hahaWeightData, sadWeightData, ang
   }
   env$finalEmojis[["Love"]] <- base::sum(unlist(env$finalWeightLove))
   
-  if (length(hahaWeightData) != 0) {
+  if (!identical(length(hahaWeightData), 0)) {
     for (s in 1:length(hahaWeightData)) {
       if ((hahaWeightData[s] >= 0 | is.null(hahaWeightData[s])) & hahaWeightData[s] <= 20) {
         env$finalWeightHaha[["Lowest"]] <- env$finalWeightHaha[["Lowest"]] + 0
@@ -49,7 +49,7 @@ emojis.FuzzyRules <- function(loveWeightData, hahaWeightData, sadWeightData, ang
   }
   env$finalEmojis[["Haha"]] <- base::sum(unlist(env$finalWeightHaha))
   
-  if (length(sadWeightData) != 0) {
+  if (!identical(length(sadWeightData), 0)) {
     for (t in 1:length(sadWeightData)) {
       if ((sadWeightData[t] >= 0 | is.null(sadWeightData[t])) & sadWeightData[t] <= 20) {
         env$finalWeightSad[["Lowest"]] <- env$finalWeightSad[["Lowest"]] + 0
@@ -74,7 +74,7 @@ emojis.FuzzyRules <- function(loveWeightData, hahaWeightData, sadWeightData, ang
   }
   env$finalEmojis[["Sad"]] <- base::sum(unlist(env$finalWeightSad))
   
-  if (length(angryWeightData) != 0) {
+  if (!identical(length(angryWeightData), 0)) {
     for (u in 1:length(angryWeightData)) {
       if ((angryWeightData[u] >= 0 | is.null(sadWeightData[u])) & angryWeightData[u] <= 20) {
         env$finalWeightAngry[["Lowest"]] <- env$finalWeightAngry[["Lowest"]] + 0

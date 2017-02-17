@@ -129,12 +129,21 @@ shinydashboard::dashboardPage(skin = "blue",
           shinydashboard::infoBoxOutput(outputId = "fearLowestBoxId", width = 3)
         )
       ),
-      shiny::tabPanel(title = "Emojis", value = "Emojis", icon = shiny::icon(name = "facebook-square", class = "fa-1x", lib = "font-awesome"),
+      shiny::tabPanel(title = "Emojis Reaction", value = "Emojis", icon = shiny::icon(name = "facebook-square", class = "fa-1x", lib = "font-awesome"),
         shiny::fluidRow(
           shinydashboard::valueBoxOutput(outputId = "loveBoxId", width = 3),
           shinydashboard::infoBoxOutput(outputId = "hahaBoxId", width = 3),
           shinydashboard::infoBoxOutput(outputId = "sadBoxId", width = 3),
           shinydashboard::infoBoxOutput(outputId = "angryBoxId", width = 3)
+        )
+      ),
+      shiny::tabPanel(title = "Emoticons", value = "Emoticons", icon = shiny::icon(name = "circle", class = "fa-1x", lib = "font-awesome"),
+        shiny::fluidRow(
+          shinydashboard::valueBoxOutput(outputId = "JoyEmoticonsBoxId", width = 3),
+          shinydashboard::infoBoxOutput(outputId = "SadnessEmoticonsBoxId", width = 3),
+          shinydashboard::infoBoxOutput(outputId = "AngerEmoticonsBoxId", width = 3),
+          shinydashboard::infoBoxOutput(outputId = "DisgustEmoticonsBoxId", width = 3),
+          shinydashboard::infoBoxOutput(outputId = "FearEmoticonsBoxId", width = 3)
         )
       )
     )
