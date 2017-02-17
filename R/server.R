@@ -6,6 +6,7 @@ source("angerFuzzyRules.R")
 source("disgustFuzzyRules.R")
 source("fearFuzzyRules.R")
 source("emojisFuzzyRules.R")
+source("emoticonsFuzzyRules.R")
 source("Calculations.R")
 
 shiny::shinyServer(function(input, output, session) {
@@ -19,13 +20,13 @@ shiny::shinyServer(function(input, output, session) {
       listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], feed = FALSE, reactions = TRUE, verbose = TRUE)
       
       # Experimetal code. regex for unicode
-      cat(listOfPosts$message)
-      for (i in 1:length(listOfPosts$message)) {
-        m <- cat(listOfPosts$message)
-        n <- regexpr(pattern = "<U\\+[a-zA-Z0-9]*><U\\+[a-zA-Z0-9]*>", m, perl=TRUE)
-        o <- regmatches(cat(listOfPosts$message), n)
-        print(o)
-      }
+      # cat(listOfPosts$message)
+      # for (i in 1:length(listOfPosts$message)) {
+      #   m <- cat(listOfPosts$message)
+      #   n <- regexpr(pattern = "<U\\+[a-zA-Z0-9]*><U\\+[a-zA-Z0-9]*>", m, perl=TRUE)
+      #   o <- regmatches(cat(listOfPosts$message), n)
+      #   print(o)
+      # }
       
       progress <- shiny::Progress$new(session, min=1, max=15)
       on.exit(progress$close())
@@ -117,6 +118,8 @@ shiny::shinyServer(function(input, output, session) {
     finalWeightHaha <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
     finalWeightSad <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
     finalWeightAngry <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+    finalCountEmoticons <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
+    finalWeightEmoticons <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
     
     analyzePostAndItsComments <- c()
     emojisLoveCounts <- c()
@@ -176,6 +179,57 @@ shiny::shinyServer(function(input, output, session) {
       })
     }
     
+    # for (i in 1:length(analyzePostAndItsComments)) {
+    #   everyWord <- tokenizers::tokenize_regex(x = analyzePostAndItsComments[i], pattern = "\\s+", simplify = TRUE)
+    #   k <- enc2native(we)
+    #   print(k)
+    #   emoticonPattern <- "<U\\+[a-zA-Z0-9]*>"
+    #   a <- grepl(pattern = emoticonPattern, x = k)
+    #   print(a)
+    # }
+    
+    unicodeRegex <- "<U\\+[a-zA-Z0-9]*>"
+    unicodeRegex2 <- "<U\\+[a-zA-Z0-9]*><U\\+[a-zA-Z0-9]*>"
+    PostsNativeEncoded <- enc2native(analyzePostAndItsComments)
+    print(PostsNativeEncoded)
+    AllEmoticons <- c()
+    for (i in 1:length(PostsNativeEncoded)) {
+      everyWord <- tokenizers::tokenize_regex(x = PostsNativeEncoded[i], pattern = "\\s+", simplify = TRUE)
+      for (j in 1:length(everyWord)) {
+        isEdTag <- grepl(pattern = "<ed>", x = everyWord[j])
+        isUnicode <- grepl(pattern = unicodeRegex, x = everyWord[j])
+        isUnicode2 <- grepl(pattern = unicodeRegex2, x = everyWord[j])
+        if (isEdTag) {
+          everyUnicode <- strsplit(x = everyWord[j], split = "<ed>")
+          for (k in everyUnicode) {
+            AllEmoticons <- append(x = AllEmoticons, values = k)
+          }
+        }
+        if (isUnicode | isUnicode2) {
+          getEmoticons <- regexpr(pattern = unicodeRegex, text = everyWord[j])
+          emoticonsLists <- regmatches(x = everyWord[j], m = getEmoticons)
+          AllEmoticons <- append(x = AllEmoticons, values = emoticonsLists)
+          getEmoticons2 <- regexpr(pattern = unicodeRegex2, text = everyWord[j])
+          emoticonsLists2 <- regmatches(x = everyWord[j], m = getEmoticons2)
+          AllEmoticons <- append(x = AllEmoticons, values = emoticonsLists2)
+        }
+      }
+      # ed <- grepl(pattern = "<ed>", x = everyWord)
+      #   
+      # if (ed) {
+      #   everyUnicode <- tokenizers::tokenize_regex(x = PostsNativeEncoded[i], pattern = "<ed>", simplify = TRUE)
+      #   print(everyUnicode) 
+      # }
+      # everyUnicode <- tokenizers::tokenize_regex(x = PostsNativeEncoded[i], pattern = "<ed>", simplify = TRUE)
+      # getEmoticons <- regexpr(pattern = "<U\\+[a-zA-Z0-9]*>", text = PostsNativeEncoded[i])
+      # emoticonsLists <- regmatches(x = PostsNativeEncoded[i], m = getEmoticons)
+      # print(emoticonsLists)
+    }
+    
+    emoticonsData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emoticons.xlsx", sheet = "emoticons", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+    
+    emoticons.FuzzyRules(emoticonsData, AllEmoticons)
+    
     emojis.FuzzyRules(emojisLoveCounts, emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
     
     # -----------------START-EMOTIONAL-ANALYSIS------------------
@@ -193,7 +247,7 @@ shiny::shinyServer(function(input, output, session) {
     totalPostAndComments <- length(analyzePostAndItsComments)
     
     for (i in 1:length(analyzePostAndItsComments)) {
-        tokenizeLines <- tokenizers::tokenize_lines(x = analyzePostAndItsComments[i], simplify = TRUE)
+      tokenizeLines <- tokenizers::tokenize_lines(x = analyzePostAndItsComments[i], simplify = TRUE)
 
       tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
       tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
@@ -259,7 +313,7 @@ shiny::shinyServer(function(input, output, session) {
     
     output$allJoyBoxId <- shinydashboard::renderValueBox({
       # Re-execute this reactive expression after 2000 milliseconds
-      invalidateLater(1000)
+      
       shinydashboard::valueBox(value = shiny::tagList(
           sumWeights[["Joy"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
@@ -306,6 +360,56 @@ shiny::shinyServer(function(input, output, session) {
     })
     
     # -----------------END-ALL-EMOTIONS------------------
+    
+    # -----------------START-EMOTICONS------------------
+    
+    output$JoyEmoticonsBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          finalWeightEmoticons[["Joy"]],
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          finalCountEmoticons[["Joy"]], " - total emoticon/s found"
+        ), icon = shiny::icon(name = "circle", class = "fa-1x", lib = "font-awesome"), color = "aqua", width = 1
+      )
+    })
+    output$SadnessEmoticonsBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          finalWeightEmoticons[["Sadness"]],
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          finalCountEmoticons[["Sadness"]], " - total emoticon/s found"
+        ), icon = shiny::icon(name = "circle-o", class = "fa-1x", lib = "font-awesome"), color = "light-blue", width = 1
+      )
+    })
+    output$AngerEmoticonsBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          finalWeightEmoticons[["Anger"]],
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          finalCountEmoticons[["Anger"]], " - total emoticon/s found"
+        ), icon = shiny::icon(name = "circle-o", class = "fa-1x", lib = "font-awesome"), color = "orange", width = 1
+      )
+    })
+    output$DisgustEmoticonsBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          finalWeightEmoticons[["Disgust"]],
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          finalCountEmoticons[["Disgust"]], " - total emoticon/s found"
+        ), icon = shiny::icon(name = "circle-thin", class = "fa-1x", lib = "font-awesome"), color = "olive", width = 1
+      )
+    })
+    output$FearEmoticonsBoxId <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value = shiny::tagList(
+          finalWeightEmoticons[["Fear"]],
+          shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+        ), subtitle = shiny::tagList(
+          finalCountEmoticons[["Fear"]], " - total emoticon/s found"
+        ), icon = shiny::icon(name = "circle-thin", class = "fa-1x", lib = "font-awesome"), color = "lime", width = 1
+      )
+    })
+    
+    # -----------------END-EMOTICONS------------------
     
     # -----------------START-EMOJIS------------------
     
