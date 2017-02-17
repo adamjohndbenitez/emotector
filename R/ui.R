@@ -39,6 +39,7 @@ shinydashboard::dashboardPage(skin = "blue",
     shiny::div(class = "facebookP", " ",
       shiny::uiOutput(outputId = "downloadCSV")
     ),
+    shiny::tags$hr(),
     shiny::div(class= "submitPostBtn", " ",
          shiny::actionButton(inputId = "submitManualPostId", label = "Analyze Post", icon = 
               shiny::icon(name = "hdd-o", class = "fa-1x", lib = "font-awesome"), width = "70%"

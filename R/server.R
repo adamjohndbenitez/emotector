@@ -27,6 +27,16 @@ shiny::shinyServer(function(input, output, session) {
         print(o)
       }
       
+      progress <- shiny::Progress$new(session, min=1, max=15)
+      on.exit(progress$close())
+
+      progress$set(message = "Getting Facebook Post.. ", detail = "This may take a while...")
+
+      for (i in 1:15) {
+        progress$set(value = i)
+        Sys.sleep(0.25)
+      }
+      
       output$postListUIId <- shiny::renderUI({
         shiny::selectInput(inputId = "postListId", label = "Select Post #", choices = base::length(listOfPosts$message):1) # sorted from latest to oldest
       })
@@ -133,7 +143,6 @@ shiny::shinyServer(function(input, output, session) {
             analyzePostAndItsComments <- append(x = analyzePostAndItsComments, values = listofCommentsForAnalysis$comments$message[z])
           }
         }
-        
         for (h in 1:length(listOfPostsForAnalysis$message)) {
           emojisLoveCounts <- append(x = emojisLoveCounts, values = listOfPostsForAnalysis$love_count[h])
           emojisHahaCounts <- append(x = emojisHahaCounts, values = listOfPostsForAnalysis$haha_count[h])
