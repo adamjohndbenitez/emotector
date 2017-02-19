@@ -37,24 +37,17 @@ shinydashboard::dashboardPage(skin = "blue",
     shiny::tags$br(),
     shiny::tags$hr(),
     shiny::div(class = "facebookP", " ",
-      shiny::uiOutput(outputId = "downloadCSV")
+      shiny::uiOutput(outputId = "downloadCSVUIId")
     ),
     shiny::tags$hr(),
     shiny::div(class= "submitPostBtn", " ",
-         shiny::actionButton(inputId = "submitManualPostId", label = "Analyze Post", icon = 
-              shiny::icon(name = "hdd-o", class = "fa-1x", lib = "font-awesome"), width = "70%"
-         )  
-    ),
+        shiny::actionButton(inputId = "submitAnalyzePostId", label = "Analyze Emotions", icon = 
+          shiny::icon(name = "fa-binoculars", class = "fa-1x", lib = "font-awesome"), width = "70%")
+      ),
     shiny::tags$hr(),
-    
-    shiny::checkboxInput(inputId = "checkManualPostId", label = "Analyze / Override Posts: ", value = FALSE, width = "100%"),
+    shiny::checkboxInput(inputId = "checkManualPostId", label = "Testbox", value = FALSE, width = "100%"),
     shiny::conditionalPanel(condition = "input.checkManualPostId == true", 
-      shiny::textAreaInput(inputId = "manualPostTextAreaId", label = NULL, value = "", width = "100%", height = "200px", placeholder = "You can override post from facebook API, by removing page id and input here."),
-      shiny::div(class= "submitPostBtn", " ",
-         shiny::actionButton(inputId = "submitManualPostId", label = "Analyze Post", icon = 
-            shiny::icon(name = "hdd-o", class = "fa-1x", lib = "font-awesome"), width = "70%"
-         )  
-      )
+      shiny::textAreaInput(inputId = "manualPostTextAreaId", label = NULL, value = "", width = "100%", height = "200px", placeholder = "You can manually test a post, by providing input in this testbox. However, if you provide input in the search input, it will override manual test post")
     )
   ),
   shinydashboard::dashboardBody(
@@ -138,7 +131,7 @@ shinydashboard::dashboardPage(skin = "blue",
           shinydashboard::infoBoxOutput(outputId = "angryBoxId", width = 3)
         )
       ),
-      shiny::tabPanel(title = "Emoticons", value = "Emoticons", icon = shiny::icon(name = "circle", class = "fa-1x", lib = "font-awesome"),
+      shiny::tabPanel(title = "Emoticons", value = "Emoticons", icon = shiny::icon(name = "circle-o", class = "fa-1x", lib = "font-awesome"),
         shiny::fluidRow(
           shinydashboard::valueBoxOutput(outputId = "JoyEmoticonsBoxId", width = 3),
           shinydashboard::infoBoxOutput(outputId = "SadnessEmoticonsBoxId", width = 3),
@@ -150,21 +143,30 @@ shinydashboard::dashboardPage(skin = "blue",
     )
     ),
     shiny::fixedRow(
-      column(width = 12, 
-        fixedRow(
-          column(width = 6,
+      shiny::column(width = 12, 
+        shiny::fixedRow(
+          shiny::column(width = 6,
             shiny::fluidRow(
               shinydashboard::box(title = "Summary of Weighted Emotions", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
                 shiny::plotOutput("plot")
               )
             )
           ),
-          column(width = 6,
+          shiny::column(width = 6,
             shiny::fluidRow(
               shinydashboard::box(title = "Degree of Emotions (Count-based Stacked Barplot)", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
                 shiny::plotOutput("plot1")
               )
             )
+          )
+        )
+      )
+    ),
+    shiny::fixedRow(
+      shiny::column(width = 12, 
+        shiny::fluidRow(
+          shinydashboard::box(title = "Summary of Weighted Emotions", width = 12, solidHeader = FALSE, status = "primary", background = NULL,
+            shiny::plotOutput("plot2")
           )
         )
       )

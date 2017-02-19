@@ -19,25 +19,6 @@ shiny::shinyServer(function(input, output, session) {
     base::tryCatch(expr = {
       listOfPosts <- Rfacebook::getPage(page = input$searchText, token = fb_oauth, n = base::as.numeric(input$numberOfPosts), since = input$dateRangeId[1], until = input$dateRangeId[2], feed = FALSE, reactions = TRUE, verbose = TRUE)
       
-      # Experimetal code. regex for unicode
-      # cat(listOfPosts$message)
-      # for (i in 1:length(listOfPosts$message)) {
-      #   m <- cat(listOfPosts$message)
-      #   n <- regexpr(pattern = "<U\\+[a-zA-Z0-9]*><U\\+[a-zA-Z0-9]*>", m, perl=TRUE)
-      #   o <- regmatches(cat(listOfPosts$message), n)
-      #   print(o)
-      # }
-      
-      progress <- shiny::Progress$new(session, min=1, max=15)
-      on.exit(progress$close())
-
-      progress$set(message = "Getting Facebook Post.. ", detail = "This may take a while...")
-
-      for (i in 1:15) {
-        progress$set(value = i)
-        Sys.sleep(0.25)
-      }
-      
       output$postListUIId <- shiny::renderUI({
         shiny::selectInput(inputId = "postListId", label = "Select Post #", choices = base::length(listOfPosts$message):1) # sorted from latest to oldest
       })
@@ -46,16 +27,17 @@ shiny::shinyServer(function(input, output, session) {
         listofComments <- Rfacebook::getPost(post = listOfPosts$id[as.numeric(input$postListId)], token = fb_oauth, n = base::as.numeric(input$numberOfComments), comments = TRUE, likes = TRUE)
         
         output$viewCommentsId <- shiny::renderTable(expr = {
+          withProgress(message = "Getting Facebook Post...", detail = "This may take a while...", value = 0, {
+            for (i in 1:15) {
+              incProgress(1/15)
+              Sys.sleep(0.25)
+            }
+          })
+          
           listofComments$comments$message
         }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "xs", width = "auto", rownames = TRUE, colnames = TRUE, na = NA)
         
         c("#", input$postListId, ":", listOfPosts$message[as.numeric(input$postListId)])
-      })
-      
-      output$downloadCSV <- shiny::renderUI({
-        shiny::downloadLink(outputId = "downloadCsvFileId", label = shiny::tagList(
-          shiny::icon(name = "download", class = "fa-1x", lib = "font-awesome"), "Download Posts")
-        )
       })
       
       output$viewPostUIId <- shiny::renderUI({
@@ -70,13 +52,19 @@ shiny::shinyServer(function(input, output, session) {
         )
       })
       
+      output$downloadCSVUIId <- shiny::renderUI({
+        shiny::downloadLink(outputId = "downloadCsvFileId", label = shiny::tagList(
+          shiny::icon(name = "download", class = "fa-1x", lib = "font-awesome"), "Download Posts")
+        )
+      })
+      
       output$downloadCsvFileId <- shiny::downloadHandler(
         filename = function() { paste("Facebook_Posts_", Sys.Date(), ".csv", sep = "") },
         content = function(file) {
           write.csv(x = listOfPosts, file = file)
         }
       )
-
+      
       shiny::showNotification(ui = "We're good...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
      }, error = function(e) {
        shiny::showNotification(ui = "The Facebook page or group ID you’re using is not correct or invalid. Click link below", action = 
@@ -94,12 +82,7 @@ shiny::shinyServer(function(input, output, session) {
   
   # autoInvalidate <- reactiveTimer(2000)
   
-  shiny::observeEvent(eventExpr = input$submitManualPostId, handlerExpr = {
-    
-    # observe(x = {
-    #   # autoInvalidate()
-    #   invalidateLater(1000, session)
-    # })
+  shiny::observeEvent(eventExpr = input$submitAnalyzePostId, handlerExpr = {
     
     finalCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
     finalWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
@@ -122,10 +105,19 @@ shiny::shinyServer(function(input, output, session) {
     finalWeightEmoticons <- list(Joy = 0, Sadness = 0, Anger = 0, Disgust = 0, Fear = 0)
     
     analyzePostAndItsComments <- c()
+    detectedWordsGathered <- c()
     emojisLoveCounts <- c()
     emojisHahaCounts <- c()
     emojisSadCounts <- c()
     emojisAngryCounts <- c()
+    
+    joyData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Joy", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+    sadnessData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Sadness", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+    angerData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Anger", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+    disgustData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Disgust", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+    fearData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Fear", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+    contrastingConjunctions <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Constrasting Conjunctions", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+    
     if ((input$searchText != "") & (input$manualPostTextAreaId == "" | input$manualPostTextAreaId != "")) {
       base::load(file = "fb_oauth")
       
@@ -135,8 +127,6 @@ shiny::shinyServer(function(input, output, session) {
         for (i in 1:length(listOfPostsForAnalysis$message)) {
           if (validUTF8(listOfPostsForAnalysis$message[i])) {
             analyzePostAndItsComments <- append(x = analyzePostAndItsComments, values = listOfPostsForAnalysis$message[i])
-            # emoticonsOfPostsForAnalysis <- tokenizers::tokenize_regex(x = listOfPostsForAnalysis$message[i], pattern = "<U\\+[a-zA-Z0-9]*>", simplify = TRUE)
-            # print(emoticonsOfPostsForAnalysis)
           }
         }
 
@@ -163,7 +153,7 @@ shiny::shinyServer(function(input, output, session) {
       }, warning = function(w) {
         shiny::showNotification(ui = "Waring message.", duration = 5, closeButton = FALSE, type = "warning", session = shiny::getDefaultReactiveDomain())
       }, finally = {
-
+        
       })
       
     } else {
@@ -179,135 +169,111 @@ shiny::shinyServer(function(input, output, session) {
       })
     }
     
-    # for (i in 1:length(analyzePostAndItsComments)) {
-    #   everyWord <- tokenizers::tokenize_regex(x = analyzePostAndItsComments[i], pattern = "\\s+", simplify = TRUE)
-    #   k <- enc2native(we)
-    #   print(k)
-    #   emoticonPattern <- "<U\\+[a-zA-Z0-9]*>"
-    #   a <- grepl(pattern = emoticonPattern, x = k)
-    #   print(a)
-    # }
-    
-    unicodeRegex <- "<U\\+[a-zA-Z0-9]*>"
-    unicodeRegex2 <- "<U\\+[a-zA-Z0-9]*><U\\+[a-zA-Z0-9]*>"
-    PostsNativeEncoded <- enc2native(analyzePostAndItsComments)
-    print(PostsNativeEncoded)
-    AllEmoticons <- c()
-    for (i in 1:length(PostsNativeEncoded)) {
-      everyWord <- tokenizers::tokenize_regex(x = PostsNativeEncoded[i], pattern = "\\s+", simplify = TRUE)
-      for (j in 1:length(everyWord)) {
-        isEdTag <- grepl(pattern = "<ed>", x = everyWord[j])
-        isUnicode <- grepl(pattern = unicodeRegex, x = everyWord[j])
-        isUnicode2 <- grepl(pattern = unicodeRegex2, x = everyWord[j])
-        if (isEdTag) {
-          everyUnicode <- strsplit(x = everyWord[j], split = "<ed>")
-          for (k in everyUnicode) {
-            AllEmoticons <- append(x = AllEmoticons, values = k)
-          }
-        }
-        if (isUnicode | isUnicode2) {
-          getEmoticons <- regexpr(pattern = unicodeRegex, text = everyWord[j])
-          emoticonsLists <- regmatches(x = everyWord[j], m = getEmoticons)
-          AllEmoticons <- append(x = AllEmoticons, values = emoticonsLists)
-          getEmoticons2 <- regexpr(pattern = unicodeRegex2, text = everyWord[j])
-          emoticonsLists2 <- regmatches(x = everyWord[j], m = getEmoticons2)
-          AllEmoticons <- append(x = AllEmoticons, values = emoticonsLists2)
-        }
-      }
-      # ed <- grepl(pattern = "<ed>", x = everyWord)
-      #   
-      # if (ed) {
-      #   everyUnicode <- tokenizers::tokenize_regex(x = PostsNativeEncoded[i], pattern = "<ed>", simplify = TRUE)
-      #   print(everyUnicode) 
-      # }
-      # everyUnicode <- tokenizers::tokenize_regex(x = PostsNativeEncoded[i], pattern = "<ed>", simplify = TRUE)
-      # getEmoticons <- regexpr(pattern = "<U\\+[a-zA-Z0-9]*>", text = PostsNativeEncoded[i])
-      # emoticonsLists <- regmatches(x = PostsNativeEncoded[i], m = getEmoticons)
-      # print(emoticonsLists)
-    }
-    
-    emoticonsData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emoticons.xlsx", sheet = "emoticons", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-    
-    emoticons.FuzzyRules(emoticonsData, AllEmoticons)
-    
-    emojis.FuzzyRules(emojisLoveCounts, emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
-    
-    # -----------------START-EMOTIONAL-ANALYSIS------------------
-    
-    joyData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Joy", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-    sadnessData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Sadness", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-    angerData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Anger", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-    disgustData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Disgust", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-    fearData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Fear", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-    contrastingConjunctions <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Constrasting Conjunctions", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-    
-    progress <- shiny::Progress$new()
-    on.exit(expr = progress$close())
-    progress$set(message = "Post and Comments: ", value = 0)
-    totalPostAndComments <- length(analyzePostAndItsComments)
-    
-    for (i in 1:length(analyzePostAndItsComments)) {
-      tokenizeLines <- tokenizers::tokenize_lines(x = analyzePostAndItsComments[i], simplify = TRUE)
-
-      tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-      
-      progress$inc(1/totalPostAndComments, detail = paste(i, " of ", length(analyzePostAndItsComments)))
-      Sys.sleep(0.1)
-      
-      for (j in 1:length(tokenizeLines)) {
-        tokenizeWords <- tokenizers::tokenize_words(x = tokenizeLines[j], lowercase = TRUE, stopwords = NULL, simplify = TRUE)
-        
-        for (k in 1:length(tokenizeWords)) {
+    if (!identical(length(analyzePostAndItsComments), 0)) {
+      # -----------------START-EMOTIONAL-ANALYSIS------------------
           
-          for (l in 1:nrow(contrastingConjunctions)) {
-            if (identical(tokenizeWords[k], contrastingConjunctions[l, 1])) {
-              tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-              tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-              tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-              tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-              tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-              tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-              tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-              tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-              tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
-              tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+      unicodeRegex <- "<U\\+[a-zA-Z0-9]*>"
+      unicodeRegex2 <- "<U\\+[a-zA-Z0-9]*><U\\+[a-zA-Z0-9]*>"
+      PostsNativeEncoded <- enc2native(analyzePostAndItsComments)
+      AllEmoticons <- c()
+      for (i in 1:length(PostsNativeEncoded)) {
+        everyWord <- tokenizers::tokenize_regex(x = PostsNativeEncoded[i], pattern = "\\s+", simplify = TRUE)
+        for (j in 1:length(everyWord)) {
+          isEdTag <- grepl(pattern = "<ed>", x = everyWord[j])
+          isUnicode <- grepl(pattern = unicodeRegex, x = everyWord[j])
+          isUnicode2 <- grepl(pattern = unicodeRegex2, x = everyWord[j])
+          if (isTRUE(isEdTag)) {
+            everyUnicode <- strsplit(x = everyWord[j], split = "<ed>")
+            for (k in everyUnicode) {
+              AllEmoticons <- append(x = AllEmoticons, values = k)
             }
           }
-          
-          #----------START JOY-FUZZY-SETS----------
-          joy.FuzzyRules(joyData, tokenizeWords[k], tokenizeWords[k+1])
-          #----------END JOY-FUZZY-SETS----------
-          #----------START SADNESS-FUZZY-SETS----------
-          sadness.FuzzyRules(sadnessData, tokenizeWords[k], tokenizeWords[k+1])
-          #----------END SADNESS-FUZZY-SETS----------
-          #----------START ANGER-FUZZY-SETS----------
-          anger.FuzzyRules(angerData, tokenizeWords[k], tokenizeWords[k+1])
-          #----------END ANGER-FUZZY-SETS----------
-          #----------START DISGUST-FUZZY-SETS----------
-          disgust.FuzzyRules(disgustData, tokenizeWords[k], tokenizeWords[k+1])
-          #----------END DISGUST-FUZZY-SETS----------
-          #----------START FEAR-FUZZY-SETS----------
-          fear.FuzzyRules(fearData, tokenizeWords[k], tokenizeWords[k+1])
-          #----------END FEAR-FUZZY-SETS----------
-          
+          if (isTRUE(isUnicode) | isTRUE(isUnicode2)) {
+            getEmoticons <- regexpr(pattern = unicodeRegex, text = everyWord[j])
+            emoticonsLists <- regmatches(x = everyWord[j], m = getEmoticons)
+            AllEmoticons <- append(x = AllEmoticons, values = emoticonsLists)
+            getEmoticons2 <- regexpr(pattern = unicodeRegex2, text = everyWord[j])
+            emoticonsLists2 <- regmatches(x = everyWord[j], m = getEmoticons2)
+            AllEmoticons <- append(x = AllEmoticons, values = emoticonsLists2)
+          }
         }
-        tally.emotions()
-
       }
-      total.emotions()
+      
+      emoticonsData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emoticons.xlsx", sheet = "emoticons", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
+      
+      emoticons.FuzzyRules(emoticonsData, AllEmoticons)
+      
+      emojis.FuzzyRules(emojisLoveCounts, emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
+      
+      progress <- shiny::Progress$new()
+      on.exit(expr = progress$close())
+      progress$set(message = "Post and Comments: ", value = 0)
+      totalPostAndComments <- length(analyzePostAndItsComments)
+      
+      for (i in 1:length(analyzePostAndItsComments)) {
+        tokenizeLines <- tokenizers::tokenize_lines(x = analyzePostAndItsComments[i], simplify = TRUE)
+  
+        tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+        
+        progress$inc(1/totalPostAndComments, detail = paste(i, " of ", length(analyzePostAndItsComments)))
+        Sys.sleep(0.1)
+        
+        for (j in 1:length(tokenizeLines)) {
+          tokenizeWords <- tokenizers::tokenize_words(x = tokenizeLines[j], lowercase = TRUE, stopwords = NULL, simplify = TRUE)
+          
+          for (k in 1:length(tokenizeWords)) {
+            
+            for (l in 1:nrow(contrastingConjunctions)) {
+              if (identical(tokenizeWords[k], contrastingConjunctions[l, 1])) {
+                tempCountJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                tempWeightJoy <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                tempCountSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                tempWeightSadness <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                tempCountAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                tempWeightAnger <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                tempCountDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                tempWeightDisgust <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                tempCountFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+                tempWeightFear <- list(Lowest = 0, Low = 0, Neutral = 0, High = 0, Higher = 0, Highest = 0)
+              }
+            }
+            
+            #----------START JOY-FUZZY-SETS----------
+            joy.FuzzyRules(joyData, tokenizeWords[k], tokenizeWords[k+1])
+            #----------END JOY-FUZZY-SETS----------
+            #----------START SADNESS-FUZZY-SETS----------
+            sadness.FuzzyRules(sadnessData, tokenizeWords[k], tokenizeWords[k+1])
+            #----------END SADNESS-FUZZY-SETS----------
+            #----------START ANGER-FUZZY-SETS----------
+            anger.FuzzyRules(angerData, tokenizeWords[k], tokenizeWords[k+1])
+            #----------END ANGER-FUZZY-SETS----------
+            #----------START DISGUST-FUZZY-SETS----------
+            disgust.FuzzyRules(disgustData, tokenizeWords[k], tokenizeWords[k+1])
+            #----------END DISGUST-FUZZY-SETS----------
+            #----------START FEAR-FUZZY-SETS----------
+            fear.FuzzyRules(fearData, tokenizeWords[k], tokenizeWords[k+1])
+            #----------END FEAR-FUZZY-SETS----------
+            
+          }
+          tally.emotions()
+  
+        }
+        total.emotions()
+      }
+      shiny::showNotification(ui = "Done...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
+      # -----------------END-EMOTIONAL-ANALYSIS------------------
+    } else {
+      shiny::showNotification(ui = "There are no inputs..", action = "You can override post, by providing manual input. Just ensure you search input is blank.", duration = 10, closeButton = TRUE, type = "warning", session = shiny::getDefaultReactiveDomain())
     }
-    shiny::showNotification(ui = "Done...", duration = 5, closeButton = FALSE, type = "message", session = shiny::getDefaultReactiveDomain())
-    
-    # -----------------END-EMOTIONAL-ANALYSIS------------------
     
     # -----------------START-ALL-EMOTIONS------------------
     
@@ -807,6 +773,10 @@ shiny::shinyServer(function(input, output, session) {
       tableDataEmotions <- as.table(countsMatrix)
       graphics::barplot(height = tableDataEmotions, width = 2, main = "Emotions vs Degrees",
         xlab = "Emotions", ylab = "Degrees", col = grey.colors(length(rownames(tableDataEmotions))), legend.text = rownames(tableDataEmotions))
+    })
+    
+    output$plot2 <- renderPlot({
+      wordcloud::wordcloud(words = detectedWordsGathered)
     })
     
     #----------END-OF-GRAPHS/CHARTS----------
