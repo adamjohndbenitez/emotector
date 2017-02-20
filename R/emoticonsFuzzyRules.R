@@ -1,8 +1,8 @@
 emoticons.FuzzyRules <- function(emoticonsData, AllEmoticons, env = parent.frame()) {
   for (i in 1:length(AllEmoticons)) {
-      print(typeof(AllEmoticons))
+      #print(typeof(AllEmoticons))
     for (j in 1:nrow(emoticonsData)) {
-      print(emoticonsData[j, 1])
+      #print(emoticonsData[j, 1])
       if (identical(AllEmoticons[i], emoticonsData[j, 1])) {
         env$finalCountEmoticons[["Joy"]] <- env$finalCountEmoticons[["Joy"]] + 1
         env$finalWeightEmoticons[["Joy"]] <- env$finalWeightEmoticons[["Joy"]] + 0.4

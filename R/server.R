@@ -234,6 +234,7 @@ shiny::shinyServer(function(input, output, session) {
     emojisSadCounts <- c()
     emojisAngryCounts <- c()
     
+    
     joyData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Joy", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
     sadnessData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Sadness", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
     angerData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emotion.xlsx", sheet = "Anger", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
@@ -330,7 +331,7 @@ shiny::shinyServer(function(input, output, session) {
       }
       
       emoticonsData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emoticons.xlsx", sheet = "emoticons", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-      print(AllEmoticons)
+      #print(AllEmoticons)
       emoticons.FuzzyRules(emoticonsData, AllEmoticons)
       
       emojis.FuzzyRules(emojisLoveCounts, emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
@@ -405,6 +406,7 @@ shiny::shinyServer(function(input, output, session) {
       shiny::showNotification(ui = "There are no inputs..", action = "You can override post, by providing manual input. Just ensure you search input is blank.", duration = 10, closeButton = TRUE, type = "warning", session = shiny::getDefaultReactiveDomain())
     }
     
+    print(detectedWordsGathered)
     # -----------------START-ALL-EMOTIONS------------------
     
     output$allJoyBoxId <- shinydashboard::renderValueBox({
@@ -906,7 +908,13 @@ shiny::shinyServer(function(input, output, session) {
     })
     
     output$plot2 <- renderPlot({
-      wordcloud::wordcloud(words = detectedWordsGathered)
+      #wordcloud::wordcloud(c(letters, LETTERS, 0:9), seq(1, 1000, len = 62))
+      #wordcloud::wordcloud(words = detectedWordsGathered, seq(1, 1, len = 62), scale=c(4,0.5),min.freq=3, mmax.words=Inf,colors=brewer.pal(8, "Blues"))
+      wordcloud::wordcloud(words = detectedWordsGathered,seq(1, 1, len = 62),c(8,.3),2,,TRUE,TRUE,.15,)
+      # wordcloud::wordcloud(words = detectedWordsGathered,seq(1, 1, len = 62), scale=c(4,.5), min.freq=3, max.words=Inf,
+      #           random.order=TRUE, random.color=TRUE)
+      # wordcloud::wordcloud(c(words = detectedWordsGathered, words = detectedWordsGathered, 0:0), seq(1, 1, len = 62),
+      #                      random.order=FALSE, random.color = TRUE, scale=c(5, .5))
     })
     
     #----------END-OF-GRAPHS/CHARTS----------
