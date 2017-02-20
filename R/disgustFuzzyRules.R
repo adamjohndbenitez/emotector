@@ -18,7 +18,7 @@ disgust.FuzzyRules <- function(disgustData, tokenizeWords1, tokenizeWords2, env 
 
         if (identical(tokenizeWords2, disgustData[n, 5])) {
           env$tempCountDisgust[["Lowest"]] <- env$tempCountDisgust[["Lowest"]] + 1
-          env$tempCountDisgust[["Higher"]] <- env$tempCountDisgust[["Higher"]] - 1
+          # env$tempCountDisgust[["Higher"]] <- env$tempCountDisgust[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -44,7 +44,7 @@ disgust.FuzzyRules <- function(disgustData, tokenizeWords1, tokenizeWords2, env 
 
         if (identical(tokenizeWords2, disgustData[m, 5])) {
           env$tempCountDisgust[["Low"]] <- env$tempCountDisgust[["Low"]] + 1
-          env$tempCountDisgust[["Higher"]] <- env$tempCountDisgust[["Higher"]] - 1
+          # env$tempCountDisgust[["Higher"]] <- env$tempCountDisgust[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -70,7 +70,7 @@ disgust.FuzzyRules <- function(disgustData, tokenizeWords1, tokenizeWords2, env 
 
         if (identical(tokenizeWords2, disgustData[o, 5])) {
           env$tempCountDisgust[["Highest"]] <- env$tempCountDisgust[["Highest"]] + 1
-          env$tempCountDisgust[["Higher"]] <- env$tempCountDisgust[["Higher"]] - 1
+          # env$tempCountDisgust[["Higher"]] <- env$tempCountDisgust[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }

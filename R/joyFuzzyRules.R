@@ -18,7 +18,7 @@ joy.FuzzyRules <- function(joyData, tokenizeWords1, tokenizeWords2, env = parent
 
         if (identical(tokenizeWords2, joyData[n, 5])) {
           env$tempCountJoy[["Lowest"]] <- env$tempCountJoy[["Lowest"]] + 1
-          env$tempCountJoy[["Higher"]] <- env$tempCountJoy[["Higher"]] - 1
+          # env$tempCountJoy[["Higher"]] <- env$tempCountJoy[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -28,26 +28,23 @@ joy.FuzzyRules <- function(joyData, tokenizeWords1, tokenizeWords2, env = parent
     
     if (identical(tokenizeWords1, joyData[l, 2])) {
       for (m in 1:nrow(joyData)) {
-        if (is.na(joyData[m, 3])) {
-        } else if (tokenizeWords2 == joyData[m, 3]) {
+        if (identical(tokenizeWords2, joyData[m, 3])) {
           env$tempCountJoy[["Low"]] <- env$tempCountJoy[["Low"]] + 1
           env$tempCountJoy[["Neutral"]] <- env$tempCountJoy[["Neutral"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
 
-        if (is.na(joyData[m, 4])) {
-        } else if (tokenizeWords2 == joyData[m, 4]) {
+        if (identical(tokenizeWords2, joyData[m, 4])) {
           env$tempCountJoy[["Low"]] <- env$tempCountJoy[["Low"]] + 1
           env$tempCountJoy[["High"]] <- env$tempCountJoy[["High"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
 
-        if (is.na(joyData[m, 5])) {
-        } else if (tokenizeWords2 == joyData[m, 5]) {
+        if (identical(tokenizeWords2, joyData[m, 5])) {
           env$tempCountJoy[["Low"]] <- env$tempCountJoy[["Low"]] + 1
-          env$tempCountJoy[["Higher"]] <- env$tempCountJoy[["Higher"]] - 1
+          # env$tempCountJoy[["Higher"]] <- env$tempCountJoy[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -67,17 +64,28 @@ joy.FuzzyRules <- function(joyData, tokenizeWords1, tokenizeWords2, env = parent
         if (identical(tokenizeWords2, joyData[o, 4])) {
           env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
           env$tempCountJoy[["High"]] <- env$tempCountJoy[["High"]] - 1
+          env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
 
         if (identical(tokenizeWords2, joyData[o, 5])) {
           env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
-          env$tempCountJoy[["Higher"]] <- env$tempCountJoy[["Higher"]] - 1
+          # env$tempCountJoy[["Higher"]] <- env$tempCountJoy[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
       }
       break()
+    }
+    
+    if (identical(tokenizeWords1, joyData[l, 3])) {
+      for (b in 1:nrow(joyData)) {
+        if (identical(tokenizeWords2, joyData[b, 6])) {
+          env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
+          env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+          break()
+        }
+      }
     }
     
     if (identical(tokenizeWords1, joyData[l, 3])) {

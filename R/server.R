@@ -28,9 +28,9 @@ shiny::shinyServer(function(input, output, session) {
         
         output$viewCommentsId <- shiny::renderTable(expr = {
           withProgress(message = "Getting Facebook Post...", detail = "This may take a while...", value = 0, {
-            for (i in 1:15) {
-              incProgress(1/15)
-              Sys.sleep(0.25)
+            for (i in 1:10) {
+              incProgress(1/10)
+              Sys.sleep(0.10)
             }
           })
           
@@ -151,7 +151,7 @@ shiny::shinyServer(function(input, output, session) {
              shinydashboard::infoBoxOutput(outputId = "fearLowestBoxId", width = 3)
            )
          ),
-         shiny::tabPanel(title = "Emojis Reaction", value = "Emojis", icon = shiny::icon(name = "facebook-square", class = "fa-1x", lib = "font-awesome"),
+         shiny::tabPanel(title = "Facebook Emojis", value = "Emojis", icon = shiny::icon(name = "facebook-square", class = "fa-1x", lib = "font-awesome"),
            shiny::fluidRow(
              shinydashboard::valueBoxOutput(outputId = "loveBoxId", width = 3),
              shinydashboard::infoBoxOutput(outputId = "hahaBoxId", width = 3),
@@ -293,7 +293,7 @@ shiny::shinyServer(function(input, output, session) {
       })
     }
     
-    if (!identical(length(analyzePostAndItsComments), 0)) {
+    if (!identical(analyzePostAndItsComments, "")) {
       # -----------------START-EMOTIONAL-ANALYSIS------------------
           
       unicodeRegex <- "<U\\+[a-zA-Z0-9]*>"
@@ -331,8 +331,9 @@ shiny::shinyServer(function(input, output, session) {
       }
       
       emoticonsData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emoticons.xlsx", sheet = "emoticons", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
-      #print(AllEmoticons)
+      
       emoticons.FuzzyRules(emoticonsData, AllEmoticons)
+      
       
       emojis.FuzzyRules(emojisLoveCounts, emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
       
@@ -396,7 +397,6 @@ shiny::shinyServer(function(input, output, session) {
             
           }
           tally.emotions()
-  
         }
         total.emotions()
       }
@@ -406,7 +406,6 @@ shiny::shinyServer(function(input, output, session) {
       shiny::showNotification(ui = "There are no inputs..", action = "You can override post, by providing manual input. Just ensure you search input is blank.", duration = 10, closeButton = TRUE, type = "warning", session = shiny::getDefaultReactiveDomain())
     }
     
-    print(detectedWordsGathered)
     # -----------------START-ALL-EMOTIONS------------------
     
     output$allJoyBoxId <- shinydashboard::renderValueBox({
@@ -835,7 +834,7 @@ shiny::shinyServer(function(input, output, session) {
       )
     })
     output$fearHigherBoxId <- shinydashboard::renderInfoBox({
-      shinydashboard::infoBox(title = "Highest fear",
+      shinydashboard::infoBox(title = "Higher fear",
         value = shiny::tagList(
           finalWeightFear[["Higher"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")

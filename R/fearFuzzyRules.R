@@ -18,7 +18,7 @@ fear.FuzzyRules <- function(fearData, tokenizeWords1, tokenizeWords2, env = pare
 
         if (identical(tokenizeWords2, fearData[n, 5])) {
           env$tempCountFear[["Lowest"]] <- env$tempCountFear[["Lowest"]] + 1
-          env$tempCountFear[["Higher"]] <- env$tempCountFear[["Higher"]] - 1
+          # env$tempCountFear[["Higher"]] <- env$tempCountFear[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -44,7 +44,7 @@ fear.FuzzyRules <- function(fearData, tokenizeWords1, tokenizeWords2, env = pare
 
         if (identical(tokenizeWords2, fearData[m, 5])) {
           env$tempCountFear[["Low"]] <- env$tempCountFear[["Low"]] + 1
-          env$tempCountFear[["Higher"]] <- env$tempCountFear[["Higher"]] - 1
+          # env$tempCountFear[["Higher"]] <- env$tempCountFear[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -70,7 +70,7 @@ fear.FuzzyRules <- function(fearData, tokenizeWords1, tokenizeWords2, env = pare
 
         if (identical(tokenizeWords2, fearData[o, 5])) {
           env$tempCountFear[["Highest"]] <- env$tempCountFear[["Highest"]] + 1
-          env$tempCountFear[["Higher"]] <- env$tempCountFear[["Higher"]] - 1
+          # env$tempCountFear[["Higher"]] <- env$tempCountFear[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }

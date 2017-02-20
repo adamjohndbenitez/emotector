@@ -18,7 +18,7 @@ anger.FuzzyRules <- function(angerData, tokenizeWords1, tokenizeWords2, env = pa
 
         if (identical(tokenizeWords2, angerData[n, 5])) {
           env$tempCountAnger[["Lowest"]] <- env$tempCountAnger[["Lowest"]] + 1
-          env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] - 1
+          # env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -44,7 +44,7 @@ anger.FuzzyRules <- function(angerData, tokenizeWords1, tokenizeWords2, env = pa
 
         if (identical(tokenizeWords2, angerData[m, 5])) {
           env$tempCountAnger[["Low"]] <- env$tempCountAnger[["Low"]] + 1
-          env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] - 1
+          # env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -70,7 +70,7 @@ anger.FuzzyRules <- function(angerData, tokenizeWords1, tokenizeWords2, env = pa
 
         if (identical(tokenizeWords2, angerData[o, 5])) {
           env$tempCountAnger[["Highest"]] <- env$tempCountAnger[["Highest"]] + 1
-          env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] - 1
+          # env$tempCountAnger[["Higher"]] <- env$tempCountAnger[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }

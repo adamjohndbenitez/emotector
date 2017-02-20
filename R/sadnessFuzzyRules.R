@@ -18,7 +18,7 @@ sadness.FuzzyRules <- function(sadnessData, tokenizeWords1, tokenizeWords2, env 
 
         if (identical(tokenizeWords2, sadnessData[n, 5])) {
           env$tempCountSadness[["Lowest"]] <- env$tempCountSadness[["Lowest"]] + 1
-          env$tempCountSadness[["Higher"]] <- env$tempCountSadness[["Higher"]] - 1
+          # env$tempCountSadness[["Higher"]] <- env$tempCountSadness[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -44,7 +44,7 @@ sadness.FuzzyRules <- function(sadnessData, tokenizeWords1, tokenizeWords2, env 
 
         if (identical(tokenizeWords2, sadnessData[m, 5])) {
           env$tempCountSadness[["Low"]] <- env$tempCountSadness[["Low"]] + 1
-          env$tempCountSadness[["Higher"]] <- env$tempCountSadness[["Higher"]] - 1
+          # env$tempCountSadness[["Higher"]] <- env$tempCountSadness[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }
@@ -70,7 +70,7 @@ sadness.FuzzyRules <- function(sadnessData, tokenizeWords1, tokenizeWords2, env 
 
         if (identical(tokenizeWords2, sadnessData[o, 5])) {
           env$tempCountSadness[["Highest"]] <- env$tempCountSadness[["Highest"]] + 1
-          env$tempCountSadness[["Higher"]] <- env$tempCountSadness[["Higher"]] - 1
+          # env$tempCountSadness[["Higher"]] <- env$tempCountSadness[["Higher"]] - 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           break()
         }

@@ -60,11 +60,9 @@ shinydashboard::dashboardPage(skin = "blue",
     shiny::fluidRow(
       shiny::uiOutput(outputId = "viewCommentsUIId")
     ),
-    
     shiny::fluidRow(
       shiny::uiOutput(outputId = "showEmotionsBoxes")
     ),
-    
     shiny::fixedRow(
       shiny::column(width = 12, 
         shiny::fixedRow(
