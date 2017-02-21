@@ -8,6 +8,7 @@ source("fearFuzzyRules.R")
 source("emojisFuzzyRules.R")
 source("emoticonsFuzzyRules.R")
 source("Calculations.R")
+library(RColorBrewer)
 
 shiny::shinyServer(function(input, output, session) {
   shiny::updateDateRangeInput(session = session, inputId = "dateRangeId", start = base::Sys.Date() - 7, end = base::Sys.Date())
@@ -906,14 +907,9 @@ shiny::shinyServer(function(input, output, session) {
         xlab = "Emotions", ylab = "Degrees", col = grey.colors(length(rownames(tableDataEmotions))), legend.text = rownames(tableDataEmotions))
     })
     
+    uniqueWords <- unique(detectedWordsGathered)
     output$plot2 <- renderPlot({
-      #wordcloud::wordcloud(c(letters, LETTERS, 0:9), seq(1, 1000, len = 62))
-      #wordcloud::wordcloud(words = detectedWordsGathered, seq(1, 1, len = 62), scale=c(4,0.5),min.freq=3, mmax.words=Inf,colors=brewer.pal(8, "Blues"))
-      wordcloud::wordcloud(words = detectedWordsGathered,seq(1, 1, len = 62),c(8,.3),2,,TRUE,TRUE,.15,)
-      # wordcloud::wordcloud(words = detectedWordsGathered,seq(1, 1, len = 62), scale=c(4,.5), min.freq=3, max.words=Inf,
-      #           random.order=TRUE, random.color=TRUE)
-      # wordcloud::wordcloud(c(words = detectedWordsGathered, words = detectedWordsGathered, 0:0), seq(1, 1, len = 62),
-      #                      random.order=FALSE, random.color = TRUE, scale=c(5, .5))
+      wordcloud::wordcloud(c(words = uniqueWords, words = uniqueWords), scale = c(3, 0.5), colors=brewer.pal(8, "Blues"), max.words = 30)
     })
     
     #----------END-OF-GRAPHS/CHARTS----------
