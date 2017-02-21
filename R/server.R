@@ -35,7 +35,7 @@ shiny::shinyServer(function(input, output, session) {
           })
           
           listofComments$comments$message
-        }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "xs", width = "auto", rownames = TRUE, colnames = TRUE, na = NA)
+        }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "xs", width = "auto", rownames = TRUE, colnames = FALSE, na = NA)
         
         c("#", input$postListId, ":", listOfPosts$message[as.numeric(input$postListId)])
       })
