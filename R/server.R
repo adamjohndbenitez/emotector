@@ -907,9 +907,8 @@ shiny::shinyServer(function(input, output, session) {
         xlab = "Emotions", ylab = "Degrees", col = grey.colors(length(rownames(tableDataEmotions))), legend.text = rownames(tableDataEmotions))
     })
     
-    uniqueWords <- unique(detectedWordsGathered)
     output$plot2 <- renderPlot({
-      wordcloud::wordcloud(c(words = uniqueWords, words = uniqueWords), scale = c(3, 0.5), colors=brewer.pal(8, "Blues"), max.words = 30)
+      wordcloud::wordcloud(detectedWordsGathered, scale=c(5,0.6), min.freq = 0, max.words=Inf, colors=brewer.pal(8, "Dark2"))
     })
     
     #----------END-OF-GRAPHS/CHARTS----------
