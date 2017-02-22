@@ -106,4 +106,79 @@ joy.FuzzyRules <- function(joyData, tokenizeWords1, tokenizeWords2, env = parent
       break()
     }
   }
+  
+  # Improve Fuzzy RUle but there are inconsistency
+    # for (l in 1:nrow(joyData)) {
+    # if (identical(tokenizeWords1, joyData[l, 3]) & !is.na(joyData[l, 3])) {
+    #   print(joyData[l, 6])
+    #   if (identical(tokenizeWords0, joyData[l, 6]) & !is.na(joyData[l, 6])) {
+    #     env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords0)
+    #     break()
+    #   } else if (identical(tokenizeWords2, joyData[l, 6]) & !is.na(joyData[l, 6])) { # condition for bisaya intensifier
+    #     env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+    #     break()
+    #   } else if (identical(tokenizeWords0, joyData[l, 2]) & !is.na(joyData[l, 2])) {
+    #     env$tempCountJoy[["Low"]] <- env$tempCountJoy[["Low"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+    #     break()
+    #   } else if (identical(tokenizeWords0, joyData[l, 1]) & !is.na(joyData[l, 1])) {
+    #     env$tempCountJoy[["Lowest"]] <- env$tempCountJoy[["Lowest"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+    #     break()
+    #   } else if (identical(tokenizeWords1, joyData[l, 3]) & !is.na(joyData[l, 3])) {
+    #     env$tempCountJoy[["Neutral"]] <- env$tempCountJoy[["Neutral"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords1)
+    #     break()
+    #   }
+    # }
+    # 
+    # if (identical(tokenizeWords1, joyData[l, 4]) & !is.na(joyData[l, 4])) {
+    #   if (identical(tokenizeWords0, joyData[l, 6]) & !is.na(joyData[l, 6])) {
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords0)
+    #     break()
+    #   } else if (identical(tokenizeWords2, joyData[l, 6]) & !is.na(joyData[l, 6])) { # condition for bisaya intensifier
+    #     env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+    #     break()
+    #   } else if (identical(tokenizeWords0, joyData[l, 2]) & !is.na(joyData[l, 2])) {
+    #     env$tempCountJoy[["Low"]] <- env$tempCountJoy[["Low"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+    #     break()
+    #   } else if (identical(tokenizeWords0, joyData[l, 1]) & !is.na(joyData[l, 1])) {
+    #     env$tempCountJoy[["Lowest"]] <- env$tempCountJoy[["Lowest"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+    #     break()
+    #   } else if (identical(tokenizeWords1, joyData[l, 4]) & !is.na(joyData[l, 4])) {
+    #     env$tempCountJoy[["High"]] <- env$tempCountJoy[["High"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords1)
+    #     break()
+    #   }
+    # }
+    # 
+    # if (identical(tokenizeWords1, joyData[l, 5]) & !is.na(joyData[l, 5])) {
+    #   if (identical(tokenizeWords0, joyData[l, 6]) & !is.na(joyData[l, 6])) {
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords0)
+    #     break()
+    #   } else if (identical(tokenizeWords2, joyData[l, 6]) & !is.na(joyData[l, 6])) { # condition for bisaya intensifier
+    #     env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+    #     break()
+    #   } else if (identical(tokenizeWords0, joyData[l, 2]) & !is.na(joyData[l, 2])) {
+    #     env$tempCountJoy[["Low"]] <- env$tempCountJoy[["Low"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+    #     break()
+    #   } else if (identical(tokenizeWords0, joyData[l, 1]) & !is.na(joyData[l, 1])) {
+    #     env$tempCountJoy[["Lowest"]] <- env$tempCountJoy[["Lowest"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+    #     break()
+    #   } else if (identical(tokenizeWords1, joyData[l, 5]) & !is.na(joyData[l, 5])) {
+    #     env$tempCountJoy[["Higher"]] <- env$tempCountJoy[["Higher"]] + 1
+    #     env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords1)
+    #     break()
+    #   }
+    # }
+  # Improve Fuzzy RUle but there are inconsistency
+  
 }

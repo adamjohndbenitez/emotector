@@ -79,6 +79,16 @@ disgust.FuzzyRules <- function(disgustData, tokenizeWords1, tokenizeWords2, env 
     }
     
     if (identical(tokenizeWords1, disgustData[l, 3])) {
+      for (b in 1:nrow(disgustData)) {
+        if (identical(tokenizeWords2, disgustData[b, 6])) {
+          env$tempCountDisgust[["Highest"]] <- env$tempCountDisgust[["Highest"]] + 1
+          env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+          break()
+        }
+      }
+    }
+    
+    if (identical(tokenizeWords1, disgustData[l, 3])) {
       env$tempCountDisgust[["Neutral"]] <- env$tempCountDisgust[["Neutral"]] + 1
       env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords1)
       break()

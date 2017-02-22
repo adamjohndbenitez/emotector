@@ -79,6 +79,16 @@ sadness.FuzzyRules <- function(sadnessData, tokenizeWords1, tokenizeWords2, env 
     }
     
     if (identical(tokenizeWords1, sadnessData[l, 3])) {
+      for (b in 1:nrow(sadnessData)) {
+        if (identical(tokenizeWords2, sadnessData[b, 6])) {
+          env$tempCountSadness[["Highest"]] <- env$tempCountSadness[["Highest"]] + 1
+          env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+          break()
+        }
+      }
+    }
+    
+    if (identical(tokenizeWords1, sadnessData[l, 3])) {
       env$tempCountSadness[["Neutral"]] <- env$tempCountSadness[["Neutral"]] + 1
       env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords1)
       break()
