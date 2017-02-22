@@ -381,7 +381,7 @@ shiny::shinyServer(function(input, output, session) {
             }
             
             #----------START JOY-FUZZY-SETS----------
-            joy.FuzzyRules(joyData, tokenizeWords[k-1], tokenizeWords[k], tokenizeWords[k+1])
+            joy.FuzzyRules(joyData, tokenizeWords[k], tokenizeWords[k+1])
             #----------END JOY-FUZZY-SETS----------
             #----------START SADNESS-FUZZY-SETS----------
             sadness.FuzzyRules(sadnessData, tokenizeWords[k], tokenizeWords[k+1])
