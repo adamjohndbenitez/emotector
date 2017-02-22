@@ -79,6 +79,16 @@ fear.FuzzyRules <- function(fearData, tokenizeWords1, tokenizeWords2, env = pare
     }
     
     if (identical(tokenizeWords1, fearData[l, 3])) {
+      for (b in 1:nrow(fearData)) {
+        if (identical(tokenizeWords2, fearData[b, 6])) {
+          env$tempCountFear[["Highest"]] <- env$tempCountFear[["Highest"]] + 1
+          env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
+          break()
+        }
+      }
+    }
+    
+    if (identical(tokenizeWords1, fearData[l, 3])) {
       env$tempCountFear[["Neutral"]] <- env$tempCountFear[["Neutral"]] + 1
       env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords1)
       break()

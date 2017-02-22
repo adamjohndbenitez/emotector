@@ -8,6 +8,7 @@ source("fearFuzzyRules.R")
 source("emojisFuzzyRules.R")
 source("emoticonsFuzzyRules.R")
 source("Calculations.R")
+
 library(RColorBrewer)
 
 shiny::shinyServer(function(input, output, session) {
@@ -335,7 +336,6 @@ shiny::shinyServer(function(input, output, session) {
       
       emoticons.FuzzyRules(emoticonsData, AllEmoticons)
       
-      
       emojis.FuzzyRules(emojisLoveCounts, emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
       
       progress <- shiny::Progress$new()
@@ -381,7 +381,7 @@ shiny::shinyServer(function(input, output, session) {
             }
             
             #----------START JOY-FUZZY-SETS----------
-            joy.FuzzyRules(joyData, tokenizeWords[k], tokenizeWords[k+1])
+            joy.FuzzyRules(joyData, tokenizeWords[k-1], tokenizeWords[k], tokenizeWords[k+1])
             #----------END JOY-FUZZY-SETS----------
             #----------START SADNESS-FUZZY-SETS----------
             sadness.FuzzyRules(sadnessData, tokenizeWords[k], tokenizeWords[k+1])
