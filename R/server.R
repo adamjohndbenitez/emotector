@@ -12,6 +12,8 @@ source("Calculations.R")
 library(RColorBrewer)
 
 shiny::shinyServer(function(input, output, session) {
+  # startDateTime <- format(Sys.time() - 604800, "%d-%m-%y %H:%M:%OS")
+  # endDateTime <- format(Sys.time(), "%d-%m-%y %H:%M:%OS")
   shiny::updateDateRangeInput(session = session, inputId = "dateRangeId", start = base::Sys.Date() - 7, end = base::Sys.Date())
   
   shiny::observeEvent(eventExpr = input$searchButton, handlerExpr = {
@@ -908,7 +910,7 @@ shiny::shinyServer(function(input, output, session) {
     })
     
     output$plot2 <- renderPlot({
-      wordcloud::wordcloud(detectedWordsGathered, scale=c(5,0.6), min.freq = 0, max.words=Inf, colors=brewer.pal(8, "Dark2"))
+      wordcloud::wordcloud(detectedWordsGathered, scale=c(6,0.8), min.freq = 0, max.words=Inf, colors=brewer.pal(8, "Dark2"))
     })
     
     #----------END-OF-GRAPHS/CHARTS----------
