@@ -45,13 +45,13 @@ shiny::shinyServer(function(input, output, session) {
       })
       
       output$viewPostUIId <- shiny::renderUI({
-        shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary", background = NULL,
+        shinydashboard::box(title = "Post", width = 12, solidHeader = TRUE, status = "primary", background = NULL, collapsible = TRUE, collapsed = TRUE,
           shiny::textOutput(outputId = "viewPostId")
         )
       })
       
       output$viewCommentsUIId <- shiny::renderUI({
-        shinydashboard::box(title = "Comments", width = 12, solidHeader = TRUE, status = "primary", 
+        shinydashboard::box(title = "Comments", width = 12, solidHeader = TRUE, status = "primary", background = NULL, collapsible = TRUE, collapsed = TRUE,
           shiny::tableOutput(outputId = "viewCommentsId")
         )
       })
@@ -158,14 +158,14 @@ shiny::shinyServer(function(input, output, session) {
          shiny::tabPanel(title = "Facebook Emojis", value = "Emojis", icon = shiny::icon(name = "facebook-square", class = "fa-1x", lib = "font-awesome"),
            shiny::fluidRow(
              shinydashboard::valueBoxOutput(outputId = "loveBoxId", width = 3),
-             shinydashboard::infoBoxOutput(outputId = "hahaBoxId", width = 3),
-             shinydashboard::infoBoxOutput(outputId = "sadBoxId", width = 3),
-             shinydashboard::infoBoxOutput(outputId = "angryBoxId", width = 3)
+             shinydashboard::valueBoxOutput(outputId = "hahaBoxId", width = 3),
+             shinydashboard::valueBoxOutput(outputId = "sadBoxId", width = 3),
+             shinydashboard::valueBoxOutput(outputId = "angryBoxId", width = 3)
            )
          ),
          shiny::tabPanel(title = "Emoticons", value = "Emoticons", icon = shiny::icon(name = "circle", class = "fa-1x", lib = "font-awesome"),
            shiny::fluidRow(
-             shinydashboard::valueBoxOutput(outputId = "JoyEmoticonsBoxId", width = 3),
+             shinydashboard::infoBoxOutput(outputId = "JoyEmoticonsBoxId", width = 3),
              shinydashboard::infoBoxOutput(outputId = "SadnessEmoticonsBoxId", width = 3),
              shinydashboard::infoBoxOutput(outputId = "AngerEmoticonsBoxId", width = 3),
              shinydashboard::infoBoxOutput(outputId = "DisgustEmoticonsBoxId", width = 3),
@@ -336,9 +336,13 @@ shiny::shinyServer(function(input, output, session) {
       
       emoticonsData <- openxlsx::readWorkbook(xlsxFile = "final-list-of-emoticons.xlsx", sheet = "emoticons", startRow = 1, colNames = TRUE, rowNames = FALSE, detectDates = FALSE, skipEmptyRows = TRUE, rows = NULL, cols = NULL, check.names = FALSE, namedRegion = NULL)
       
-      emoticons.FuzzyRules(emoticonsData, AllEmoticons)
+      if (!identical(length(AllEmoticons), 0)) {
+        emoticons.FuzzyRules(emoticonsData, AllEmoticons)
+      }
       
-      emojis.FuzzyRules(emojisLoveCounts, emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
+      if (!identical(length(emojisLoveCounts), 0) | !identical(length(emojisHahaCounts), 0) | !identical(length(emojisSadCounts), 0) | !identical(length(emojisAngryCounts), 0)) {
+        emojis.FuzzyRules(emojisLoveCounts, emojisHahaCounts, emojisSadCounts, emojisAngryCounts)
+      }
       
       progress <- shiny::Progress$new()
       on.exit(expr = progress$close())
@@ -463,49 +467,94 @@ shiny::shinyServer(function(input, output, session) {
     
     # -----------------START-EMOTICONS------------------
     
-    output$JoyEmoticonsBoxId <- shinydashboard::renderValueBox({
-      shinydashboard::valueBox(value = shiny::tagList(
+    # output$JoyEmoticonsBoxId <- shinydashboard::renderValueBox({
+    #   shinydashboard::valueBox(value = shiny::tagList(
+    #       finalWeightEmoticons[["Joy"]],
+    #       shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+    #     ), subtitle = shiny::tagList(
+    #       finalCountEmoticons[["Joy"]], " - total emoticon/s found"
+    #     ), icon = shiny::icon(name = "circle", class = "fa-1x", lib = "font-awesome"), color = "aqua", width = 1
+    #   )
+    # })
+    output$JoyEmoticonsBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Joy Emoticons",
+        value = shiny::tagList(
           finalWeightEmoticons[["Joy"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-        ), subtitle = shiny::tagList(
-          finalCountEmoticons[["Joy"]], " - total emoticon/s found"
-        ), icon = shiny::icon(name = "circle", class = "fa-1x", lib = "font-awesome"), color = "aqua", width = 1
+        ), subtitle = shiny::tagList(finalCountEmoticons[["Joy"]], " - total emoticon/s found"),
+        icon = shiny::icon(name = "circle", class = "fa-1x", lib = "font-awesome"), color = "aqua", width = 1, fill = TRUE
       )
     })
-    output$SadnessEmoticonsBoxId <- shinydashboard::renderValueBox({
-      shinydashboard::valueBox(value = shiny::tagList(
+    # output$SadnessEmoticonsBoxId <- shinydashboard::renderValueBox({
+    #   shinydashboard::valueBox(value = shiny::tagList(
+    #       finalWeightEmoticons[["Sadness"]],
+    #       shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+    #     ), subtitle = shiny::tagList(
+    #       finalCountEmoticons[["Sadness"]], " - total emoticon/s found"
+    #     ), icon = shiny::icon(name = "circle-o", class = "fa-1x", lib = "font-awesome"), color = "light-blue", width = 1
+    #   )
+    # })
+    output$SadnessEmoticonsBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Sadness Emoticons",
+        value = shiny::tagList(
           finalWeightEmoticons[["Sadness"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-        ), subtitle = shiny::tagList(
-          finalCountEmoticons[["Sadness"]], " - total emoticon/s found"
-        ), icon = shiny::icon(name = "circle-o", class = "fa-1x", lib = "font-awesome"), color = "light-blue", width = 1
+        ), subtitle = shiny::tagList(finalCountEmoticons[["Sadness"]], " - total emoticon/s found"),
+        icon = shiny::icon(name = "circle-o", class = "fa-1x", lib = "font-awesome"), color = "light-blue", width = 1, fill = TRUE
       )
     })
-    output$AngerEmoticonsBoxId <- shinydashboard::renderValueBox({
-      shinydashboard::valueBox(value = shiny::tagList(
+    # output$AngerEmoticonsBoxId <- shinydashboard::renderValueBox({
+    #   shinydashboard::valueBox(value = shiny::tagList(
+    #       finalWeightEmoticons[["Anger"]],
+    #       shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+    #     ), subtitle = shiny::tagList(
+    #       finalCountEmoticons[["Anger"]], " - total emoticon/s found"
+    #     ), icon = shiny::icon(name = "circle-o", class = "fa-1x", lib = "font-awesome"), color = "orange", width = 1
+    #   )
+    # })
+    output$AngerEmoticonsBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Sadness Emoticons",
+        value = shiny::tagList(
           finalWeightEmoticons[["Anger"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-        ), subtitle = shiny::tagList(
-          finalCountEmoticons[["Anger"]], " - total emoticon/s found"
-        ), icon = shiny::icon(name = "circle-o", class = "fa-1x", lib = "font-awesome"), color = "orange", width = 1
+        ), subtitle = shiny::tagList(finalCountEmoticons[["Anger"]], " - total emoticon/s found"),
+        icon = shiny::icon(name = "circle-o", class = "fa-1x", lib = "font-awesome"), color = "orange", width = 1, fill = TRUE
       )
     })
-    output$DisgustEmoticonsBoxId <- shinydashboard::renderValueBox({
-      shinydashboard::valueBox(value = shiny::tagList(
+    # output$DisgustEmoticonsBoxId <- shinydashboard::renderValueBox({
+    #   shinydashboard::valueBox(value = shiny::tagList(
+    #       finalWeightEmoticons[["Disgust"]],
+    #       shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+    #     ), subtitle = shiny::tagList(
+    #       finalCountEmoticons[["Disgust"]], " - total emoticon/s found"
+    #     ), icon = shiny::icon(name = "circle-thin", class = "fa-1x", lib = "font-awesome"), color = "olive", width = 1
+    #   )
+    # })
+    output$DisgustEmoticonsBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Sadness Emoticons",
+        value = shiny::tagList(
           finalWeightEmoticons[["Disgust"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-        ), subtitle = shiny::tagList(
-          finalCountEmoticons[["Disgust"]], " - total emoticon/s found"
-        ), icon = shiny::icon(name = "circle-thin", class = "fa-1x", lib = "font-awesome"), color = "olive", width = 1
+        ), subtitle = shiny::tagList(finalCountEmoticons[["Disgust"]], " - total emoticon/s found"),
+        icon = shiny::icon(name = "circle-thin", class = "fa-1x", lib = "font-awesome"), color = "olive", width = 1, fill = TRUE
       )
     })
-    output$FearEmoticonsBoxId <- shinydashboard::renderValueBox({
-      shinydashboard::valueBox(value = shiny::tagList(
+    # output$FearEmoticonsBoxId <- shinydashboard::renderValueBox({
+    #   shinydashboard::valueBox(value = shiny::tagList(
+    #       finalWeightEmoticons[["Fear"]],
+    #       shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
+    #     ), subtitle = shiny::tagList(
+    #       finalCountEmoticons[["Fear"]], " - total emoticon/s found"
+    #     ), icon = shiny::icon(name = "circle-thin", class = "fa-1x", lib = "font-awesome"), color = "lime", width = 1
+    #   )
+    # })
+    output$FearEmoticonsBoxId <- shinydashboard::renderInfoBox({
+      shinydashboard::infoBox(title = "Fear Emoticons",
+        value = shiny::tagList(
           finalWeightEmoticons[["Fear"]],
           shiny::icon(name = "balance-scale", class = "fa-1x", lib = "font-awesome")
-        ), subtitle = shiny::tagList(
-          finalCountEmoticons[["Fear"]], " - total emoticon/s found"
-        ), icon = shiny::icon(name = "circle-thin", class = "fa-1x", lib = "font-awesome"), color = "lime", width = 1
+        ), subtitle = shiny::tagList(finalCountEmoticons[["Fear"]], " - total emoticon/s found"),
+        icon = shiny::icon(name = "circle-thin", class = "fa-1x", lib = "font-awesome"), color = "olive", width = 1, fill = TRUE
       )
     })
     
@@ -909,9 +958,11 @@ shiny::shinyServer(function(input, output, session) {
         xlab = "Emotions", ylab = "Degrees", col = grey.colors(length(rownames(tableDataEmotions))), legend.text = rownames(tableDataEmotions))
     })
     
-    output$plot2 <- renderPlot({
-      wordcloud::wordcloud(detectedWordsGathered, scale=c(6,0.8), min.freq = 0, max.words=Inf, colors=brewer.pal(8, "Dark2"))
-    })
+    if (!identical(length(detectedWordsGathered), 0) & TermDocumentMatrix) {
+      output$plot2 <- renderPlot({
+        wordcloud::wordcloud(detectedWordsGathered, scale=c(6,0.8), min.freq = 0, max.words=Inf, colors=brewer.pal(8, "Dark2"))
+      })
+    }
     
     #----------END-OF-GRAPHS/CHARTS----------
     
