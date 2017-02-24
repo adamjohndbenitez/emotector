@@ -183,9 +183,6 @@ shiny::shinyServer(function(input, output, session) {
       shinydashboard::box(title = "Degree of Emotions (Count-based Stacked Barplot)", width = 12, solidHeader = FALSE, status = "primary", background = NULL, shiny::plotOutput("plot1"))
     })
     
-    output$showWordCloud <- shiny::renderUI({
-      shinydashboard::box(title = "Word Cloud", width = 12, solidHeader = FALSE, status = "primary", background = NULL, shiny::plotOutput("plot2"))
-    })
     ########################################################
     output$myImage <- renderImage({
       # A temp file to save the output.
@@ -387,19 +384,19 @@ shiny::shinyServer(function(input, output, session) {
             }
             
             #----------START JOY-FUZZY-SETS----------
-            joy.FuzzyRules(joyData, tokenizeWords[k], tokenizeWords[k+1])
+            joy.FuzzyRules(joyData, tokenizeWords[k-1], tokenizeWords[k], tokenizeWords[k+1])
             #----------END JOY-FUZZY-SETS----------
             #----------START SADNESS-FUZZY-SETS----------
-            sadness.FuzzyRules(sadnessData, tokenizeWords[k], tokenizeWords[k+1])
+            sadness.FuzzyRules(sadnessData, tokenizeWords[k-1], tokenizeWords[k], tokenizeWords[k+1])
             #----------END SADNESS-FUZZY-SETS----------
             #----------START ANGER-FUZZY-SETS----------
-            anger.FuzzyRules(angerData, tokenizeWords[k], tokenizeWords[k+1])
+            anger.FuzzyRules(angerData, tokenizeWords[k-1], tokenizeWords[k], tokenizeWords[k+1])
             #----------END ANGER-FUZZY-SETS----------
             #----------START DISGUST-FUZZY-SETS----------
-            disgust.FuzzyRules(disgustData, tokenizeWords[k], tokenizeWords[k+1])
+            disgust.FuzzyRules(disgustData, tokenizeWords[k-1], tokenizeWords[k], tokenizeWords[k+1])
             #----------END DISGUST-FUZZY-SETS----------
             #----------START FEAR-FUZZY-SETS----------
-            fear.FuzzyRules(fearData, tokenizeWords[k], tokenizeWords[k+1])
+            fear.FuzzyRules(fearData, tokenizeWords[k-1], tokenizeWords[k], tokenizeWords[k+1])
             #----------END FEAR-FUZZY-SETS----------
             
           }
@@ -958,11 +955,22 @@ shiny::shinyServer(function(input, output, session) {
         xlab = "Emotions", ylab = "Degrees", col = grey.colors(length(rownames(tableDataEmotions))), legend.text = rownames(tableDataEmotions))
     })
     
-    if (!identical(length(detectedWordsGathered), 0) & TermDocumentMatrix) {
-      output$plot2 <- renderPlot({
-        wordcloud::wordcloud(detectedWordsGathered, scale=c(6,0.8), min.freq = 0, max.words=Inf, colors=brewer.pal(8, "Dark2"))
-      })
-    }
+    base::tryCatch(expr = {
+      if (!identical(length(detectedWordsGathered), 0)) {
+        output$showWordCloud <- shiny::renderUI({
+          shinydashboard::box(title = "Word Cloud", width = 12, solidHeader = FALSE, status = "primary", background = NULL, shiny::plotOutput("plot2"))
+        })
+        output$plot2 <- renderPlot({
+          wordcloud::wordcloud(detectedWordsGathered, scale=c(6,0.8), min.freq = 0, max.words=Inf, colors=brewer.pal(8, "Dark2"))
+        })
+      }
+    }, error = function(e) {
+       shiny::showNotification(ui = "Error in plotting world cloud.", duration = 10, closeButton = TRUE, type = "error", session = shiny::getDefaultReactiveDomain())
+     }, warning = function(w) {
+       shiny::showNotification(ui = "Warning in plotting world cloud.", duration = 5, closeButton = FALSE, type = "warning", session = shiny::getDefaultReactiveDomain())
+     }, finally = {
+       
+   })
     
     #----------END-OF-GRAPHS/CHARTS----------
     
