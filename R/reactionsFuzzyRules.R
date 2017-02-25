@@ -1,18 +1,22 @@
 reactions.FuzzyRules <- function(analyzePostAndItsComments, env = parent.frame()) {
-  laughingRegex <- "\\b(?:a*A*e*E*i*I*(?:ha*|HA*|aA*|Aa*|he*|HE*|eE*|Ee*|hi*|HI*|iI*|Ii*)+H*h*?)\\b"
-  laughOutLoudRegex <- "\\b((?:lo*|lO*|Lo*|LO*|oO*|Oo*)+l*L*?)\\b"
-  suprisedRegex <- "\\b(?:w*W*(?:wo*|wO*|Wo*|WO*|oO*|Oo*)+w*W*?)\\b"
-  cryingRegex <- "\\b(?:u*U*(?:hu*|hU*|Hu*|HU*|uU*|Uu*)+H*h*?)\\b"
-  angryRegex <- "\\b(?:g*G*g*(?:rR*|Rr*)+R?r?)\\b"
-  disgustRegex <- "\\b(?:e*E*e*(?:wW*|Ww*)+W?w?)\\b"
-  scaredRegex <- "\\b(?:w*W*(?:wa*|wA*|Wa*|WA*|aA*|Aa*)+h*H*?)\\b"
+  laughingHahaRegex <- "\\b(?:a*(?:h+a+)+h*?)\\b"
+  laughingHeheRegex <- "\\b(?:e*(?:h+e+)+h*?)\\b"
+  laughingHihiRegex <- "\\b(?:i*(?:h+i+)+h*?)\\b"
+  laughOutLoudRegex <- "\\b(?:l+o+)+l+\\b"
+  suprisedRegex <- "\\b(?:w+o+)+w+\\b"
+  cryingRegex <- "\\b(?:u*(?:h+u+)+h*?)\\b"
+  angryRegex <- "\\b(?:g*(?:g+r+)+r*?)\\b"
+  disgustRegex <- "\\b(?:e*(?:e+w+)+w*?)\\b"
+  scaredRegex <- "\\b(?:w*(?:w+a+)+h*?)\\b"
   
   for (i in 1:length(analyzePostAndItsComments)) {
-	# everyWord <- tokenizers::tokenize_words(x = analyzePostAndItsComments[i], lowercase = TRUE, stopwords = NULL, simplify = TRUE)
-    everyWord <- tokenizers::tokenize_regex(x = analyzePostAndItsComments[i], pattern = "\\s+", simplify = TRUE)
+	  everyWord <- tokenizers::tokenize_words(x = analyzePostAndItsComments[i], lowercase = TRUE, stopwords = NULL, simplify = TRUE)
+    # everyWord <- tokenizers::tokenize_regex(x = analyzePostAndItsComments[i], pattern = "\\s+", simplify = TRUE)
     
     for (j in 1:length(everyWord)) {
-      isLaughingRegex <- grepl(pattern = laughingRegex, x = everyWord[j])
+      isLaughingHahaRegex <- grepl(pattern = laughingHahaRegex, x = everyWord[j])
+      isLaughingHeheRegex <- grepl(pattern = laughingHeheRegex, x = everyWord[j])
+      isLaughingHihiRegex <- grepl(pattern = laughingHihiRegex, x = everyWord[j])
       isLaughOutLoudRegex <- grepl(pattern = laughOutLoudRegex, x = everyWord[j])
       isSuprisedRegex <- grepl(pattern = suprisedRegex, x = everyWord[j])
       isCryingRegex <- grepl(pattern = cryingRegex, x = everyWord[j])
@@ -20,14 +24,30 @@ reactions.FuzzyRules <- function(analyzePostAndItsComments, env = parent.frame()
       isDisgustRegex <- grepl(pattern = disgustRegex, x = everyWord[j])
       isScaredRegex <- grepl(pattern = scaredRegex, x = everyWord[j])
       
-      if (isTRUE(isLaughingRegex)) {
-        getLaughingRegex <- regexpr(pattern = laughingRegex, text = everyWord[j])
-        matchLaughingLists <- regmatches(x = everyWord[j], m = getLaughingRegex)
+      if (isTRUE(isLaughingHahaRegex) & (!identical(everyWord[j], "ha"))) {
+        getLaughingHahaRegex <- regexpr(pattern = laughingHahaRegex, text = everyWord[j])
+        matchLaughingHahaLists <- regmatches(x = everyWord[j], m = getLaughingHahaRegex)
         env$finalCountReactions[["Joy"]] <- env$finalCountReactions[["Joy"]] + 1
         env$finalWeightReactions[["Joy"]] <- env$finalWeightReactions[["Joy"]] + 0.6
         env$finalWeightJoy[["High"]] <- env$finalWeightJoy[["High"]] + 0.6
         env$finalCountJoy[["High"]] <- env$finalCountJoy[["High"]] + 1
-        env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = matchLaughingLists)
+        env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = matchLaughingHahaLists)
+      } else if (isTRUE(isLaughingHeheRegex) & (!identical(everyWord[j], "he"))) {
+        getLaughingHeheRegex <- regexpr(pattern = laughingHeheRegex, text = everyWord[j])
+        matchLaughingHeheLists <- regmatches(x = everyWord[j], m = getLaughingHeheRegex)
+        env$finalCountReactions[["Joy"]] <- env$finalCountReactions[["Joy"]] + 1
+        env$finalWeightReactions[["Joy"]] <- env$finalWeightReactions[["Joy"]] + 0.6
+        env$finalWeightJoy[["High"]] <- env$finalWeightJoy[["High"]] + 0.6
+        env$finalCountJoy[["High"]] <- env$finalCountJoy[["High"]] + 1
+        env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = matchLaughingHeheLists)
+      } else if (isTRUE(isLaughingHihiRegex) & (!identical(everyWord[j], "hi"))) {
+        getLaughingHihiRegex <- regexpr(pattern = laughingHihiRegex, text = everyWord[j])
+        matchLaughingHihiLists <- regmatches(x = everyWord[j], m = getLaughingHihiRegex)
+        env$finalCountReactions[["Joy"]] <- env$finalCountReactions[["Joy"]] + 1
+        env$finalWeightReactions[["Joy"]] <- env$finalWeightReactions[["Joy"]] + 0.6
+        env$finalWeightJoy[["High"]] <- env$finalWeightJoy[["High"]] + 0.6
+        env$finalCountJoy[["High"]] <- env$finalCountJoy[["High"]] + 1
+        env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = matchLaughingHihiLists)
       } else if (isTRUE(isLaughOutLoudRegex)) {
         getlaughOutLoudRegex <- regexpr(pattern = laughOutLoudRegex, text = everyWord[j])
         matchLaughOutLoudLists <- regmatches(x = everyWord[j], m = getlaughOutLoudRegex) 
