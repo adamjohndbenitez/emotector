@@ -22,13 +22,13 @@ shinydashboard::dashboardPage(skin = "blue",
         ),
         shiny::numericInput(inputId = "numberOfPosts", label = 
           shiny::tagList(
-            shiny::icon(name = "comment", class = "fa-1x", lib = "font-awesome"),
+            shiny::icon(name = "commenting-o", class = "fa-1x", lib = "font-awesome"),
             "Number of Posts"
           ), value = 5
         ),
         shiny::numericInput(inputId = "numberOfComments", label = 
           shiny::tagList(
-            shiny::icon(name = "comments", class = "fa-1x", lib = "font-awesome"),
+            shiny::icon(name = "comments-o", class = "fa-1x", lib = "font-awesome"),
             "Number of comments"
           ), value = 5
         )
