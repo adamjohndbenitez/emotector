@@ -108,7 +108,7 @@ fear.FuzzyRules <- function(fearData, tokenizeWords0, tokenizeWords1, tokenizeWo
       }
       
       for (c in 1:nrow(fearData)) {
-        if (identical(tokenizeWords2, fearData[b, 6]) & !is.na(fearData[b, 6])) {
+        if (identical(tokenizeWords2, fearData[c, 6]) & !is.na(fearData[c, 6])) {
           env$tempCountFear[["Highest"]] <- env$tempCountFear[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
@@ -168,7 +168,7 @@ fear.FuzzyRules <- function(fearData, tokenizeWords0, tokenizeWords1, tokenizeWo
       }
       
       for (c in 1:nrow(fearData)) {
-        if (identical(tokenizeWords2, fearData[b, 6]) & !is.na(fearData[b, 6])) {
+        if (identical(tokenizeWords2, fearData[c, 6]) & !is.na(fearData[c, 6])) {
           env$tempCountFear[["Highest"]] <- env$tempCountFear[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
@@ -228,7 +228,7 @@ fear.FuzzyRules <- function(fearData, tokenizeWords0, tokenizeWords1, tokenizeWo
       }
       
       for (c in 1:nrow(fearData)) {
-        if (identical(tokenizeWords2, fearData[b, 6]) & !is.na(fearData[b, 6])) {
+        if (identical(tokenizeWords2, fearData[c, 6]) & !is.na(fearData[c, 6])) {
           env$tempCountFear[["Highest"]] <- env$tempCountFear[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE

@@ -108,7 +108,7 @@ anger.FuzzyRules <- function(angerData, tokenizeWords0, tokenizeWords1, tokenize
       }
       
       for (c in 1:nrow(angerData)) {
-        if (identical(tokenizeWords2, angerData[b, 6]) & !is.na(angerData[b, 6])) {
+        if (identical(tokenizeWords2, angerData[c, 6]) & !is.na(angerData[c, 6])) {
           env$tempCountAnger[["Highest"]] <- env$tempCountAnger[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
@@ -168,7 +168,7 @@ anger.FuzzyRules <- function(angerData, tokenizeWords0, tokenizeWords1, tokenize
       }
       
       for (c in 1:nrow(angerData)) {
-        if (identical(tokenizeWords2, angerData[b, 6]) & !is.na(angerData[b, 6])) {
+        if (identical(tokenizeWords2, angerData[c, 6]) & !is.na(angerData[c, 6])) {
           env$tempCountAnger[["Highest"]] <- env$tempCountAnger[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
@@ -228,7 +228,7 @@ anger.FuzzyRules <- function(angerData, tokenizeWords0, tokenizeWords1, tokenize
       }
       
       for (c in 1:nrow(angerData)) {
-        if (identical(tokenizeWords2, angerData[b, 6]) & !is.na(angerData[b, 6])) {
+        if (identical(tokenizeWords2, angerData[c, 6]) & !is.na(angerData[c, 6])) {
           env$tempCountAnger[["Highest"]] <- env$tempCountAnger[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
