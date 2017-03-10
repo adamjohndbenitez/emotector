@@ -108,7 +108,7 @@ disgust.FuzzyRules <- function(disgustData, tokenizeWords0, tokenizeWords1, toke
       }
       
       for (c in 1:nrow(disgustData)) {
-        if (identical(tokenizeWords2, disgustData[b, 6]) & !is.na(disgustData[b, 6])) {
+        if (identical(tokenizeWords2, disgustData[c, 6]) & !is.na(disgustData[c, 6])) {
           env$tempCountDisgust[["Highest"]] <- env$tempCountDisgust[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
@@ -168,7 +168,7 @@ disgust.FuzzyRules <- function(disgustData, tokenizeWords0, tokenizeWords1, toke
       }
       
       for (c in 1:nrow(disgustData)) {
-        if (identical(tokenizeWords2, disgustData[b, 6]) & !is.na(disgustData[b, 6])) {
+        if (identical(tokenizeWords2, disgustData[c, 6]) & !is.na(disgustData[c, 6])) {
           env$tempCountDisgust[["Highest"]] <- env$tempCountDisgust[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
@@ -228,7 +228,7 @@ disgust.FuzzyRules <- function(disgustData, tokenizeWords0, tokenizeWords1, toke
       }
       
       for (c in 1:nrow(disgustData)) {
-        if (identical(tokenizeWords2, disgustData[b, 6]) & !is.na(disgustData[b, 6])) {
+        if (identical(tokenizeWords2, disgustData[c, 6]) & !is.na(disgustData[c, 6])) {
           env$tempCountDisgust[["Highest"]] <- env$tempCountDisgust[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE

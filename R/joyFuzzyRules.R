@@ -108,7 +108,7 @@ joy.FuzzyRules <- function(joyData, tokenizeWords0, tokenizeWords1, tokenizeWord
       }
       
       for (c in 1:nrow(joyData)) {
-        if (identical(tokenizeWords2, joyData[b, 6]) & !is.na(joyData[b, 6])) {
+        if (identical(tokenizeWords2, joyData[c, 6]) & !is.na(joyData[c, 6])) {
           env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
@@ -168,7 +168,7 @@ joy.FuzzyRules <- function(joyData, tokenizeWords0, tokenizeWords1, tokenizeWord
       }
       
       for (c in 1:nrow(joyData)) {
-        if (identical(tokenizeWords2, joyData[b, 6]) & !is.na(joyData[b, 6])) {
+        if (identical(tokenizeWords2, joyData[c, 6]) & !is.na(joyData[c, 6])) {
           env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
@@ -228,7 +228,7 @@ joy.FuzzyRules <- function(joyData, tokenizeWords0, tokenizeWords1, tokenizeWord
       }
       
       for (c in 1:nrow(joyData)) {
-        if (identical(tokenizeWords2, joyData[b, 6]) & !is.na(joyData[b, 6])) {
+        if (identical(tokenizeWords2, joyData[c, 6]) & !is.na(joyData[c, 6])) {
           env$tempCountJoy[["Highest"]] <- env$tempCountJoy[["Highest"]] + 1
           env$detectedWordsGathered <- append(x = env$detectedWordsGathered, values = tokenizeWords2)
           isBisayaIntensifier <- TRUE
